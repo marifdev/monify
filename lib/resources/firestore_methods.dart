@@ -78,9 +78,9 @@ class FirestoreMethods {
   }
 
   //delete category
-  Future<void> deleteCategory(String id, String uid) async {
+  Future<void> deleteCategory({required String categoryId, required String uid}) async {
     try {
-      await _firestore.collection('users').doc(uid).collection('categories').doc(id).delete();
+      await _firestore.collection('users').doc(uid).collection('categories').doc(categoryId).delete();
     } catch (e) {
       print(e.toString());
     }

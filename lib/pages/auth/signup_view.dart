@@ -1,10 +1,8 @@
 import 'package:monify/pages/auth/login_view.dart';
-import 'package:monify/resources/auth_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart';
-import '../home/home_view.dart';
 import 'auth_controller.dart';
 import 'auth_model.dart';
 
@@ -40,7 +38,7 @@ class _SignupViewState extends State<SignupView> {
           title: const Text('Signup'),
         ),
         body: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(32.0),
             child: Column(

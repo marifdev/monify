@@ -1,6 +1,5 @@
 import 'package:monify/models/currency.dart';
 import 'package:monify/models/transaction.dart';
-import 'package:monify/utils/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -30,8 +29,6 @@ class TransactionCard extends StatefulWidget {
 }
 
 class _TransactionCardState extends State<TransactionCard> {
-  final SharedPref _sharedPref = SharedPref();
-
   @override
   Widget build(BuildContext context) {
     var transaction = widget.transaction;

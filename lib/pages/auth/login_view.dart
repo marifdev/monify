@@ -38,7 +38,7 @@ class _LoginViewState extends State<LoginView> {
           title: const Text('Login'),
         ),
         body: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(32.0),
             child: Column(

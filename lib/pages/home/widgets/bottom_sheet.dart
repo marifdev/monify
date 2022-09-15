@@ -85,7 +85,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
         child: Wrap(
           children: [
             isLoading
-                ? LinearProgressIndicator()
+                ? const LinearProgressIndicator()
                 : Form(
                     key: _formKey,
                     child: Padding(
