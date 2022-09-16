@@ -12,13 +12,15 @@ class BottomSheetContainer extends StatefulWidget {
   const BottomSheetContainer({
     Key? key,
     required this.transactions,
-    // required this.categories,
+    required this.categories,
     this.tx,
+    required this.onSave,
   }) : super(key: key);
 
   final List<TransactionModel> transactions;
-  // final List<Category> categories;
+  final List<Category> categories;
   final TransactionModel? tx;
+  final Future<void> Function(dynamic tx) onSave;
 
   @override
   State<BottomSheetContainer> createState() => _BottomSheetContainerState();
@@ -26,7 +28,6 @@ class BottomSheetContainer extends StatefulWidget {
 
 class _BottomSheetContainerState extends State<BottomSheetContainer> {
   late TransactionModel _transaction;
-  List<Category> _categories = [];
   final FocusNode amountFocusNode = FocusNode();
   final firestoreMethods = FirestoreMethods();
   var userId = FirebaseAuth.instance.currentUser!.uid;
@@ -48,29 +49,10 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
         isIncome: false,
       );
     }
-    _getCategories();
-  }
-
-  void _getCategories() {
-    setState(() {
-      isLoading = true;
-    });
-    FirestoreMethods().getCategories(userId).then((value) {
-      setState(() {
-        _categories = value
-            .map((e) {
-              return Category.fromJson(e.data() as Map<String, dynamic>);
-            })
-            .toList()
-            .cast<Category>();
-        isLoading = false;
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // _categories = widget.categories;
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
@@ -159,10 +141,11 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                           _transaction.categoryId != null
                               ? DropdownButtonFormField(
                                   hint: const Text('Select Category'),
-                                  value: _categories.firstWhere((element) => element.id == _transaction.categoryId),
+                                  value:
+                                      widget.categories.firstWhere((element) => element.id == _transaction.categoryId),
                                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                                   isExpanded: true,
-                                  items: _categories.map((category) {
+                                  items: widget.categories.map((category) {
                                     return DropdownMenuItem(
                                       value: category,
                                       child: Text(category.name),
@@ -185,7 +168,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                   hint: const Text('Select Category'),
                                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                                   isExpanded: true,
-                                  items: _categories.map((category) {
+                                  items: widget.categories.map((category) {
                                     return DropdownMenuItem(
                                       value: category,
                                       child: Text(category.name),
@@ -258,13 +241,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  if (widget.tx != null) {
-                                    await firestoreMethods.updateTransaction(transaction: _transaction, uid: userId);
-                                  } else {
-                                    await firestoreMethods.addTransaction(transaction: _transaction, uid: userId);
-                                  }
-
-                                  Navigator.pop(context, true);
+                                  widget.onSave(_transaction);
                                 }
                               },
                               child: const Text('Submit'),

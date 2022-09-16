@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monify/constants.dart';
 import 'package:monify/pages/auth/login_view.dart';
-import 'package:monify/resources/firestore_methods.dart';
+import 'package:monify/pages/home/home_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:provider/provider.dart';
 
 import '../../ad_helper.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
-import '../../models/user.dart';
 import '../categories/categories_view.dart';
 import '../settings/settings_view.dart';
 import '../transactions/transactions_view.dart';
+import 'home_model.dart';
 import 'widgets/balance_card.dart';
 import 'widgets/bottom_sheet.dart';
 import 'widgets/transaction_card.dart';
@@ -57,23 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  final userId = FirebaseAuth.instance.currentUser!.uid;
-
-  List<TransactionModel> transactions = [];
-
-  List<TransactionModel> sortedTransactions = [];
-
-  List<Category> savedCategories = [];
-  var isLoading = false;
-  UserModel? user;
+  late final HomeController _controller;
+  late final HomeModel _model;
 
   //init state
   @override
   void initState() {
     super.initState();
-    _getTransactions();
-    _getCategories();
-    _getUser();
+    _model = HomeModel();
+    _controller = HomeController(_model);
+    _controller.init();
     _loadInterstitialAd();
 
     BannerAd(
@@ -100,20 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _getUser() async {
-    setState(() {
-      isLoading = true;
-    });
-    final _user = await FirestoreMethods().getUser(userId);
-    setState(() {
-      user = _user;
-      isLoading = false;
-    });
-  }
-
   double calculateBalance() {
     double balance = 0;
-    for (var transaction in transactions) {
+    for (var transaction in _model.transactions) {
       if (transaction.isIncome) {
         balance += transaction.amount;
       } else {
@@ -125,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double calculateIncome() {
     double income = 0;
-    for (var transaction in transactions) {
+    for (var transaction in _model.transactions) {
       if (transaction.isIncome) {
         income += transaction.amount;
       }
@@ -135,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double calculateOutcome() {
     double outcome = 0;
-    for (var element in transactions) {
+    for (var element in _model.transactions) {
       if (!element.isIncome) {
         outcome += element.amount;
       }
@@ -145,273 +128,221 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    sortedTransactions = transactions.toList()..sort((a, b) => b.date.compareTo(a.date));
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Monify'),
-        elevation: 0,
-      ),
-      drawer: Drawer(
-        backgroundColor: kPrimaryColor,
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(
-                  Icons.account_balance_wallet_outlined,
-                  color: Colors.white,
-                  size: 50,
-                ),
-                Text(
-                  'Monify',
-                  style: TextStyle(color: Colors.white, fontSize: 50),
-                ),
-              ],
-            ),
-            ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                ListTile(
-                  title: const Text(
-                    'Categories',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CategoriesView(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text(
-                    'Settings',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsView(),
-                      ),
-                    ).then((value) => _getUser());
-                  },
-                ),
-                ListTile(
-                  title: const Text(
-                    'Rate us',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    LaunchReview.launch();
-                  },
-                ),
-                ListTile(
-                  title: const Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginView()));
-                  },
-                ),
-              ],
-            ),
-          ],
+    return ChangeNotifierProvider(
+      create: ((context) => _model),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Monify'),
+          elevation: 0,
         ),
-      ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 100,
-                      color: kPrimaryColor,
+        drawer: Drawer(
+          backgroundColor: kPrimaryColor,
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                  Text(
+                    'Monify',
+                    style: TextStyle(color: Colors.white, fontSize: 50),
+                  ),
+                ],
+              ),
+              ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  ListTile(
+                    title: const Text(
+                      'Categories',
+                      style: TextStyle(color: Colors.white),
                     ),
-                    Positioned(
-                      bottom: -75,
-                      child: BalanceCard(
-                          balance: calculateBalance(),
-                          income: calculateIncome(),
-                          outcome: calculateOutcome(),
-                          currency: user!.currency),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 80,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Recent Transactions',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: kTextColor,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CategoriesView(),
                         ),
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        child: const Text('See All'),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransactionsView(
-                                transactions: transactions,
-                                sortedTransactions: sortedTransactions,
-                                savedCategories: savedCategories,
-                                currency: user!.currency,
-                              ),
-                            ),
-                          ).then((value) => setState(() {
-                                _getTransactions();
-                                _getCategories();
-                              }));
-                        },
-                      )
-                    ],
+                      ).then((value) => _controller.refreshCategories());
+                    },
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ListView(
-                            key: Key(transactions.length.toString()),
-                            children: sortedTransactions
-                                .map((tx) {
-                                  var category = savedCategories.firstWhere(
-                                    (element) => element.id == tx.categoryId,
-                                    orElse: () => Category(name: 'Select a category'),
-                                  );
-
-                                  return TransactionCard(
-                                    transaction: tx,
-                                    category: category,
-                                    currency: user!.currency,
-                                    onDelete: () {
-                                      setState(() {
-                                        transactions.remove(tx);
-                                        FirestoreMethods().deleteTransaction(tx.id, userId);
-                                      });
-                                    },
-                                    onEdit: () {
-                                      _showBottomSheet(txToEdit: tx);
-                                    },
-                                  );
-                                })
-                                .take(5) // only show 5 transactions
-                                .toList(),
-                          ),
-                  ),
-                ),
-                if (_bannerAd != null)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
+                  ListTile(
+                    title: const Text(
+                      'Settings',
+                      style: TextStyle(color: Colors.white),
                     ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsView(),
+                        ),
+                      ).then((value) => _controller.refreshUser());
+                    },
                   ),
-              ],
-            ),
-      floatingActionButton: Padding(
-        padding: _bannerAd == null
-            ? const EdgeInsets.only(bottom: 0)
-            : EdgeInsets.only(bottom: _bannerAd!.size.height.toDouble()),
-        child: FloatingActionButton(
-          onPressed: () {
-            _showBottomSheet();
+                  ListTile(
+                    title: const Text(
+                      'Rate us',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      LaunchReview.launch();
+                    },
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginView()));
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        body: Consumer<HomeModel>(
+          builder: (context, model, child) {
+            return _model.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : SafeArea(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 100,
+                              color: kPrimaryColor,
+                            ),
+                            Positioned(
+                              bottom: -75,
+                              child: BalanceCard(
+                                  balance: calculateBalance(),
+                                  income: calculateIncome(),
+                                  outcome: calculateOutcome(),
+                                  currency: model.user.currency),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 80),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Row(
+                            children: [
+                              const Text(
+                                'Recent Transactions',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: kTextColor,
+                                ),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                child: const Text('See All'),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TransactionsView(
+                                        transactions: model.transactions,
+                                        sortedTransactions: model.sortedTransactions,
+                                        categories: model.categories,
+                                        currency: model.user.currency,
+                                      ),
+                                    ),
+                                  ).then((value) => {
+                                        _controller.refreshTransactions(),
+                                        _controller.refreshCategories(),
+                                      });
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: model.isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : ListView(
+                                    key: Key(model.transactions.length.toString()),
+                                    children: model.sortedTransactions
+                                        .map((tx) {
+                                          var category = model.categories.firstWhere(
+                                            (element) => element.id == tx.categoryId,
+                                            orElse: () => Category(name: 'Select a category'),
+                                          );
+
+                                          return TransactionCard(
+                                            transaction: tx,
+                                            category: category,
+                                            currency: model.user.currency,
+                                            onDelete: () async {
+                                              model.sortedTransactions.remove(tx);
+                                              await _controller.deleteTransaction(tx.id);
+                                              _controller.refreshTransactions();
+                                            },
+                                            onEdit: () {
+                                              showBottomSheet(txToEdit: tx, model: model);
+                                            },
+                                          );
+                                        })
+                                        .take(5) // only show 5 transactions
+                                        .toList(),
+                                  ),
+                          ),
+                        ),
+                        if (_bannerAd != null)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SizedBox(
+                              width: _bannerAd!.size.width.toDouble(),
+                              height: _bannerAd!.size.height.toDouble(),
+                              child: AdWidget(ad: _bannerAd!),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
           },
-          tooltip: 'Add Transaction',
-          child: const Icon(Icons.add),
+        ),
+        floatingActionButton: Padding(
+          padding: _bannerAd == null
+              ? const EdgeInsets.only(bottom: 0)
+              : EdgeInsets.only(bottom: _bannerAd!.size.height.toDouble()),
+          child: FloatingActionButton(
+            onPressed: () {
+              showBottomSheet(model: _model);
+            },
+            tooltip: 'Add Transaction',
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
     );
   }
 
-  void _getTransactions() {
-    setState(() {
-      isLoading = true;
-    });
-    // get Transactions from firebase
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('transactions')
-        .get()
-        .then((value) {
-      setState(() {
-        this.transactions = value.docs
-            .map((e) {
-              return TransactionModel.fromJson(e.data());
-            })
-            .toList()
-            .cast<TransactionModel>();
-        isLoading = false;
-      });
-    });
-  }
-
-  void _getCategories() {
-    setState(() {
-      isLoading = true;
-    });
-    // get Categories from firebase
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('categories')
-        .get()
-        .then((value) async {
-      if (value.docs.isEmpty) {
-        for (var category in kCategoryList) {
-          var docRef = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(FirebaseAuth.instance.currentUser!.uid)
-              .collection('categories')
-              .add(category.toJson());
-          category.id = docRef.id;
-          docRef.set(category.toJson());
-        }
-      }
-      setState(() {
-        this.savedCategories = value.docs
-            .map((e) {
-              return Category.fromJson(e.data());
-            })
-            .toList()
-            .cast<Category>();
-        isLoading = false;
-      });
-    });
-  }
-
-  void _showBottomSheet({TransactionModel? txToEdit}) {
+  void showBottomSheet({TransactionModel? txToEdit, required HomeModel model}) {
     showModalBottomSheet(
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -423,8 +354,18 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return BottomSheetContainer(
-          transactions: transactions,
+          transactions: model.transactions,
           tx: txToEdit,
+          categories: model.categories,
+          onSave: (tx) async {
+            Navigator.pop(context);
+            if (txToEdit == null) {
+              await _controller.addTransaction(tx);
+            } else {
+              await _controller.updateTransaction(tx);
+            }
+            _controller.refreshTransactions();
+          },
         );
       },
     ).then((value) => setState(() {
@@ -437,8 +378,8 @@ class _MyHomePageState extends State<MyHomePage> {
               _interstitialAd!.show();
               transactionCount = 0;
             }
-            _getTransactions();
-            _getCategories();
+            _controller.refreshTransactions();
+            _controller.refreshCategories();
           }
         }));
   }

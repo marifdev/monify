@@ -15,13 +15,13 @@ class TransactionsView extends StatefulWidget {
     Key? key,
     required this.transactions,
     required this.sortedTransactions,
-    required this.savedCategories,
+    required this.categories,
     required this.currency,
   }) : super(key: key);
 
   List<TransactionModel> transactions;
   List<TransactionModel> sortedTransactions;
-  List<Category> savedCategories;
+  List<Category> categories;
   final Currency currency;
 
   @override
@@ -51,14 +51,14 @@ class _TransactionsViewState extends State<TransactionsView> {
         child: ListView(
           key: Key(transactions.length.toString()),
           children: sortedTransactions.map((tx) {
-            var category = widget.savedCategories.firstWhere(
+            var category = widget.categories.firstWhere(
               (element) => element.id == tx.categoryId,
             );
             return TransactionCard(
               transaction: tx,
               category: category,
               currency: widget.currency,
-              onDelete: () {
+              onDelete: () async {
                 setState(() {
                   FirestoreMethods().deleteTransaction(tx.id, userId);
                   setState(() {
@@ -91,11 +91,28 @@ class _TransactionsViewState extends State<TransactionsView> {
         return BottomSheetContainer(
           transactions: widget.transactions,
           tx: txToEdit,
-          // categories: widget.savedCategories,
+          categories: widget.categories,
+          onSave: (tx) async {
+            setState(() {
+              if (txToEdit != null) {
+                FirestoreMethods().updateTransaction(transaction: tx, uid: userId);
+                setState(() {
+                  widget.transactions.remove(txToEdit);
+                  widget.transactions.add(tx);
+                });
+              } else {
+                FirestoreMethods().addTransaction(transaction: tx, uid: userId);
+                setState(() {
+                  widget.transactions.add(tx);
+                });
+              }
+            });
+            Navigator.pop(context);
+          },
         );
       },
     ).then((value) => setState(() {
-          widget.sortedTransactions = widget.transactions..sort((a, b) => a.date.compareTo(b.date));
+          widget.sortedTransactions = widget.transactions..sort((a, b) => b.date.compareTo(a.date));
         }));
   }
 }

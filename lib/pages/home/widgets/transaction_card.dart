@@ -19,8 +19,8 @@ class TransactionCard extends StatefulWidget {
   }) : super(key: key);
 
   final TransactionModel transaction;
-  final Null Function() onDelete;
-  final Null Function() onEdit;
+  final Future<void> Function() onDelete;
+  final void Function() onEdit;
   final Category category;
   final Currency currency;
 
