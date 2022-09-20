@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.hamapp.monify</string>
+	<string>com.ham.monify</string>
 	<key>PROJECT_ID</key>
 	<string>expense-tracker-4a1a0</string>
 	<key>STORAGE_BUCKET</key>

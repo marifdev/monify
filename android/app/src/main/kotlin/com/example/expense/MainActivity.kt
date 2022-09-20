@@ -1,4 +1,4 @@
-package com.hamapp.monify
+package com.ham.monify
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monify/models/user.dart';
 
+import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
 
@@ -9,6 +10,7 @@ class HomeModel extends ChangeNotifier {
   List<TransactionModel> transactions = [];
   List<TransactionModel> sortedTransactions = [];
   List<TransactionModel> filteredTransactions = []; // TODO: implement filtered transactions
+  List<Account> accounts = [];
   late UserModel user;
   bool isLoading = false;
 
@@ -31,6 +33,15 @@ class HomeModel extends ChangeNotifier {
     notifyListeners();
 
     transactions = _transactions;
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void loadAccounts(List<Account> _accounts) {
+    isLoading = true;
+    notifyListeners();
+
+    accounts = _accounts;
     isLoading = false;
     notifyListeners();
   }

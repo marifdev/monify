@@ -6,18 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../../../models/account.dart';
 import '../../../resources/firestore_methods.dart';
 
 class BottomSheetContainer extends StatefulWidget {
   const BottomSheetContainer({
     Key? key,
     required this.transactions,
+    required this.accounts,
     required this.categories,
     this.tx,
     required this.onSave,
   }) : super(key: key);
 
   final List<TransactionModel> transactions;
+  final List<Account> accounts;
   final List<Category> categories;
   final TransactionModel? tx;
   final Future<void> Function(dynamic tx) onSave;
@@ -139,54 +142,12 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                             height: 20,
                           ),
                           _transaction.categoryId != null
-                              ? DropdownButtonFormField(
-                                  hint: const Text('Select Category'),
-                                  value:
-                                      widget.categories.firstWhere((element) => element.id == _transaction.categoryId),
-                                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                  isExpanded: true,
-                                  items: widget.categories.map((category) {
-                                    return DropdownMenuItem(
-                                      value: category,
-                                      child: Text(category.name),
-                                    );
-                                  }).toList(),
-                                  onChanged: ((value) {
-                                    setState(() {
-                                      Category valueAsCategory = value as Category;
-                                      _transaction.categoryId = valueAsCategory.id;
-                                    });
-                                  }),
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return 'Please select a category';
-                                    }
-                                    return null;
-                                  },
-                                )
-                              : DropdownButtonFormField(
-                                  hint: const Text('Select Category'),
-                                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                  isExpanded: true,
-                                  items: widget.categories.map((category) {
-                                    return DropdownMenuItem(
-                                      value: category,
-                                      child: Text(category.name),
-                                    );
-                                  }).toList(),
-                                  onChanged: ((value) {
-                                    setState(() {
-                                      Category valueAsCategory = value as Category;
-                                      _transaction.categoryId = valueAsCategory.id;
-                                    });
-                                  }),
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return 'Please select a category';
-                                    }
-                                    return null;
-                                  },
-                                ),
+                              ? showCategorySelectedDropdown()
+                              : showCategoryEmptyDropdown(),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          _transaction.accountId != null ? showAccountSelectedDropdown() : showAccountEmptyDropdown(),
                           const SizedBox(
                             height: 20,
                           ),
@@ -254,6 +215,112 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
           ],
         ),
       ),
+    );
+  }
+
+  DropdownButtonFormField<Category> showCategoryEmptyDropdown() {
+    return DropdownButtonFormField(
+      hint: const Text('Select Category'),
+      borderRadius: const BorderRadius.all(Radius.circular(20)),
+      isExpanded: true,
+      items: widget.categories.map((category) {
+        return DropdownMenuItem(
+          value: category,
+          child: Text(category.name),
+        );
+      }).toList(),
+      onChanged: ((value) {
+        setState(() {
+          Category valueAsCategory = value as Category;
+          _transaction.categoryId = valueAsCategory.id;
+        });
+      }),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select a category';
+        }
+        return null;
+      },
+    );
+  }
+
+  DropdownButtonFormField<Category> showCategorySelectedDropdown() {
+    return DropdownButtonFormField(
+      hint: const Text('Select Category'),
+      value: widget.categories.firstWhere((element) => element.id == _transaction.categoryId),
+      borderRadius: const BorderRadius.all(Radius.circular(20)),
+      isExpanded: true,
+      items: widget.categories.map((category) {
+        return DropdownMenuItem(
+          value: category,
+          child: Text(category.name),
+        );
+      }).toList(),
+      onChanged: ((value) {
+        setState(() {
+          Category valueAsCategory = value as Category;
+          _transaction.categoryId = valueAsCategory.id;
+        });
+      }),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select a category';
+        }
+        return null;
+      },
+    );
+  }
+
+  DropdownButtonFormField<Account> showAccountEmptyDropdown() {
+    return DropdownButtonFormField(
+      hint: const Text('Select Account'),
+      borderRadius: const BorderRadius.all(Radius.circular(20)),
+      isExpanded: true,
+      items: widget.accounts.map((account) {
+        return DropdownMenuItem(
+          value: account,
+          child: Text(account.name),
+        );
+      }).toList(),
+      onChanged: ((value) {
+        setState(() {
+          Account valueAsAccount = value as Account;
+          _transaction.accountId = valueAsAccount.id;
+        });
+      }),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select an account';
+        }
+        return null;
+      },
+    );
+  }
+
+  DropdownButtonFormField<Account> showAccountSelectedDropdown() {
+    return DropdownButtonFormField(
+      hint: const Text('Select Account'),
+      value: widget.accounts.firstWhere((element) => element.id == _transaction.accountId),
+      borderRadius: const BorderRadius.all(Radius.circular(20)),
+      isExpanded: true,
+      items: widget.accounts.map((account) {
+        return DropdownMenuItem(
+          value: account,
+          child: Text(account.name),
+        );
+      }).toList(),
+      onChanged: ((value) {
+        setState(() {
+          Account valueAsAccount = value as Account;
+          _transaction.accountId = valueAsAccount.id;
+        });
+      }),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select an account';
+        }
+        return null;
+      },
     );
   }
 

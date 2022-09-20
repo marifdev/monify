@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:210383683572:android:490a01fb414ae34d5a43a1",
         "android_client_info": {
-          "package_name": "com.hamapp.monify"
+          "package_name": "com.ham.monify"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "210383683572-8n72d2uvgojts4bpi1os0739rqn8kbns.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.hamapp.monify",
+            "package_name": "com.ham.monify",
             "certificate_hash": "f090fca5c44be875e75168a6eafa21d83293664d"
           }
         },

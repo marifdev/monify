@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:monify/constants.dart';
 
+import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
 import '../../models/user.dart';
@@ -29,6 +30,20 @@ class HomeController {
         _model.loadTransactions(value);
         _model.sortTransactions('date');
       });
+      getAccounts(user.uid).then((value) {
+        if (value.isNotEmpty) {
+          _model.loadAccounts(value);
+        } else {
+          Account initialAccount = Account(
+            name: 'Cash',
+            balance: 0,
+            createdAt: DateTime.now().toString(),
+            updatedAt: DateTime.now().toString(),
+          );
+          addAccount(initialAccount, user.uid);
+          _model.loadAccounts([initialAccount]);
+        }
+      });
     });
     _model.setLoading(false);
   }
@@ -39,21 +54,35 @@ class HomeController {
 
   void refreshUser() async {
     _model.setLoading(true);
-    await getUser().then((user) => _model.setUser(user));
-    _model.setLoading(false);
+    await getUser().then((user) {
+      _model.setUser(user);
+      _model.setLoading(false);
+    });
   }
 
   void refreshCategories() async {
     _model.setLoading(true);
-    await getCategories(_model.user.uid).then((value) => _model.loadCategories(value));
-    _model.setLoading(false);
+    await getCategories(_model.user.uid).then((value) {
+      _model.loadCategories(value);
+      _model.setLoading(false);
+    });
   }
 
-  void refreshTransactions() async {
+  Future<void> refreshTransactions() async {
     _model.setLoading(true);
-    await getTransactions(_model.user.uid).then((value) => _model.loadTransactions(value));
-    sortTransactions('date');
-    _model.setLoading(false);
+    await getTransactions(_model.user.uid).then((value) {
+      _model.loadTransactions(value);
+      _model.sortTransactions('date');
+      _model.setLoading(false);
+    });
+  }
+
+  void refreshAccounts() async {
+    _model.setLoading(true);
+    await getAccounts(_model.user.uid).then((value) {
+      _model.loadAccounts(value);
+      _model.setLoading(false);
+    });
   }
 
   Future<List<Category>> getCategories(String userId) async {
@@ -80,10 +109,27 @@ class HomeController {
     return transactions;
   }
 
+  Future<List<Account>> getAccounts(String userId) async {
+    List<Account> accounts = [];
+    var docs = await FirestoreMethods().getAccounts(userId);
+    accounts = docs
+        .map((e) {
+          return Account.fromJson(e.data() as Map<String, dynamic>);
+        })
+        .toList()
+        .cast<Account>();
+    return accounts;
+  }
+
   //delete transaction
-  Future<void> deleteTransaction(String id) async {
+  Future<void> deleteTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
-    await FirestoreMethods().deleteTransaction(id, _model.user.uid);
+    await FirestoreMethods().deleteTransaction(transaction.id, _model.user.uid).then((value) {
+      refreshTransactions().then((value) {
+        updateAccount(
+            accountId: transaction.accountId!, updatedFields: {'balance': calculateBalance(transaction.accountId!)});
+      });
+    });
     _model.setLoading(false);
   }
 
@@ -94,7 +140,9 @@ class HomeController {
   Future<void> addTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
     await FirestoreMethods().addTransaction(transaction: transaction, uid: _model.user.uid).then((value) {
-      refreshTransactions();
+      refreshTransactions().then((value) => updateAccount(accountId: transaction.accountId!, updatedFields: {
+            'balance': calculateBalance(transaction.accountId!),
+          }));
     });
     _model.setLoading(false);
   }
@@ -102,7 +150,10 @@ class HomeController {
   Future<void> updateTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
     await FirestoreMethods().updateTransaction(transaction: transaction, uid: _model.user.uid).then((value) {
-      refreshTransactions();
+      refreshTransactions().then((value) {
+        updateAccount(
+            accountId: transaction.accountId!, updatedFields: {'balance': calculateBalance(transaction.accountId!)});
+      });
     });
     _model.setLoading(false);
   }
@@ -113,5 +164,32 @@ class HomeController {
       refreshCategories();
     });
     _model.setLoading(false);
+  }
+
+  // add account
+  Future<void> addAccount(Account account, String userId) async {
+    _model.setLoading(true);
+    await FirestoreMethods().addAccount(account: account, uid: userId).then((value) {
+      refreshAccounts();
+    });
+    _model.setLoading(false);
+  }
+
+  Future<void> updateAccount({required String accountId, required Map<String, dynamic> updatedFields}) async {
+    await FirestoreMethods().updateAccount(updatedFields: updatedFields, accountId: accountId, uid: _model.user.uid);
+  }
+
+  calculateBalance(String accountId) {
+    double balance = 0;
+    _model.transactions.forEach((element) {
+      if (element.accountId == accountId) {
+        if (element.isIncome) {
+          balance += element.amount;
+        } else {
+          balance -= element.amount;
+        }
+      }
+    });
+    return balance;
   }
 }

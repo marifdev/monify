@@ -4,6 +4,7 @@ class TransactionModel {
   DateTime date;
   double amount;
   String? categoryId;
+  String? accountId;
   bool isIncome;
 
   TransactionModel({
@@ -12,6 +13,7 @@ class TransactionModel {
     required this.date,
     required this.amount,
     this.categoryId,
+    this.accountId,
     this.isIncome = false,
   });
 
@@ -21,6 +23,7 @@ class TransactionModel {
         date = json['date'].toDate(),
         amount = json['amount'].toDouble(),
         categoryId = json['categoryId'].toString(),
+        accountId = json['accountId'].toString(),
         isIncome = json['isIncome'];
 
   Map<String, dynamic> toJson() => {
@@ -29,6 +32,7 @@ class TransactionModel {
         'date': date,
         'amount': amount,
         'categoryId': categoryId,
+        'accountId': accountId,
         'isIncome': isIncome,
       };
 }

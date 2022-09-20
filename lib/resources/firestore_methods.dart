@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monify/models/category.dart';
 import 'package:monify/models/user.dart';
+import '../models/account.dart';
 import '../models/transaction.dart';
 
 class FirestoreMethods {
@@ -30,6 +31,18 @@ class FirestoreMethods {
     return categories;
   }
 
+  //get accounts
+  Future<List<QueryDocumentSnapshot>> getAccounts(String uid) async {
+    List<QueryDocumentSnapshot> accounts = [];
+    try {
+      QuerySnapshot result = await _firestore.collection('users').doc(uid).collection('accounts').get();
+      accounts = result.docs;
+    } catch (e) {
+      print(e.toString());
+    }
+    return accounts;
+  }
+
   //add transaction
   Future<void> addTransaction({
     required TransactionModel transaction,
@@ -42,6 +55,7 @@ class FirestoreMethods {
         'isIncome': transaction.isIncome,
         'categoryId': transaction.categoryId,
         'date': transaction.date,
+        'accountId': transaction.accountId,
       });
       await _firestore.collection('users').doc(uid).collection('transactions').doc(docRef.id).update({
         'id': docRef.id,
@@ -63,6 +77,48 @@ class FirestoreMethods {
       await _firestore.collection('users').doc(uid).collection('categories').doc(docRef.id).update({
         'id': docRef.id,
       });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //add account
+  Future<void> addAccount({
+    required Account account,
+    required String uid,
+  }) async {
+    try {
+      var docRef = await _firestore.collection('users').doc(uid).collection('accounts').add({
+        'name': account.name,
+        'balance': account.balance,
+        'createdAt': account.createdAt,
+        'updatedAt': account.updatedAt,
+      });
+      await _firestore.collection('users').doc(uid).collection('accounts').doc(docRef.id).update({
+        'id': docRef.id,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //update account
+  Future<void> updateAccount({
+    required Map<String, dynamic> updatedFields,
+    required String accountId,
+    required String uid,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(uid).collection('accounts').doc(accountId).update(updatedFields);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //delete account
+  Future<void> deleteAccount(String id, String uid) async {
+    try {
+      await _firestore.collection('users').doc(uid).collection('accounts').doc(id).delete();
     } catch (e) {
       print(e.toString());
     }
@@ -98,6 +154,7 @@ class FirestoreMethods {
         'isIncome': transaction.isIncome,
         'categoryId': transaction.categoryId,
         'date': transaction.date,
+        'accountId': transaction.accountId,
       });
     } catch (e) {
       print(e.toString());

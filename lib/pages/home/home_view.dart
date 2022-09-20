@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:monify/constants.dart';
 import 'package:monify/pages/auth/login_view.dart';
 import 'package:monify/pages/home/home_controller.dart';
@@ -9,8 +9,10 @@ import 'package:launch_review/launch_review.dart';
 import 'package:provider/provider.dart';
 
 import '../../ad_helper.dart';
+import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
+import '../accounts/accounts_view.dart';
 import '../categories/categories_view.dart';
 import '../settings/settings_view.dart';
 import '../transactions/transactions_view.dart';
@@ -159,6 +161,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   ListTile(
                     title: const Text(
+                      'Accounts',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AccountsView(),
+                        ),
+                      ).then((value) {
+                        _controller.refreshAccounts();
+                        print('refreshed accounts');
+                        _model.accounts.forEach((element) {
+                          print(element.name);
+                        });
+                      });
+                    },
+                  ),
+                  ListTile(
+                    title: const Text(
                       'Categories',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -262,6 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => TransactionsView(
+                                        accounts: model.accounts,
                                         transactions: model.transactions,
                                         sortedTransactions: model.sortedTransactions,
                                         categories: model.categories,
@@ -288,23 +312,59 @@ class _MyHomePageState extends State<MyHomePage> {
                                     key: Key(model.transactions.length.toString()),
                                     children: model.sortedTransactions
                                         .map((tx) {
+                                          var index = model.sortedTransactions.indexOf(tx);
                                           var category = model.categories.firstWhere(
                                             (element) => element.id == tx.categoryId,
                                             orElse: () => Category(name: 'Select a category'),
                                           );
+                                          var account = model.accounts.firstWhere(
+                                            (element) => element.id == tx.accountId,
+                                            orElse: () => Account(
+                                              id: '',
+                                              name: '',
+                                              balance: 0,
+                                              createdAt: '',
+                                              updatedAt: '',
+                                            ),
+                                          );
 
-                                          return TransactionCard(
-                                            transaction: tx,
-                                            category: category,
-                                            currency: model.user.currency,
-                                            onDelete: () async {
-                                              model.sortedTransactions.remove(tx);
-                                              await _controller.deleteTransaction(tx.id);
-                                              _controller.refreshTransactions();
-                                            },
-                                            onEdit: () {
-                                              showBottomSheet(txToEdit: tx, model: model);
-                                            },
+                                          return Column(
+                                            children: [
+                                              if (index == 0 ||
+                                                  DateFormat('dd MMMM yyyy').format(tx.date) !=
+                                                      DateFormat('dd MMMM yyyy')
+                                                          .format(model.sortedTransactions[index - 1].date)) ...[
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 10.0, top: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        DateFormat('dd MMMM yyyy').format(tx.date),
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: kTextColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                              TransactionCard(
+                                                account: account,
+                                                transaction: tx,
+                                                category: category,
+                                                currency: model.user.currency,
+                                                onDelete: () async {
+                                                  model.sortedTransactions.remove(tx);
+                                                  await _controller.deleteTransaction(tx);
+                                                  _controller.refreshTransactions();
+                                                },
+                                                onEdit: () {
+                                                  showBottomSheet(txToEdit: tx, model: model);
+                                                },
+                                              ),
+                                            ],
                                           );
                                         })
                                         .take(5) // only show 5 transactions
@@ -354,6 +414,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return BottomSheetContainer(
+          accounts: model.accounts,
           transactions: model.transactions,
           tx: txToEdit,
           categories: model.categories,

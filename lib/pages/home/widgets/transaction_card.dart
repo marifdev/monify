@@ -6,12 +6,14 @@ import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
 
 import '../../../constants.dart';
+import '../../../models/account.dart';
 import '../../../models/category.dart';
 
 class TransactionCard extends StatefulWidget {
   const TransactionCard({
     Key? key,
     required this.transaction,
+    required this.account,
     required this.onDelete,
     required this.onEdit,
     required this.category,
@@ -19,6 +21,7 @@ class TransactionCard extends StatefulWidget {
   }) : super(key: key);
 
   final TransactionModel transaction;
+  final Account account;
   final Future<void> Function() onDelete;
   final void Function() onEdit;
   final Category category;
@@ -78,12 +81,9 @@ class _TransactionCardState extends State<TransactionCard> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(DateFormat('yyyy-MM-dd').format(transaction.date)),
-              Row(
-                children: [
-                  Text(widget.category.name),
-                ],
-              ),
+              Text(widget.category.name),
+              const SizedBox(height: 5),
+              Text(widget.account.name),
             ],
           ),
         ),
