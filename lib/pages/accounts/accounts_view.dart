@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../constants.dart';
 import '../../models/account.dart';
 import '../../models/category.dart';
+import '../account_detail/account_detail_view.dart';
 import 'accounts_controller.dart';
 import 'accounts_model.dart';
 
@@ -61,34 +62,42 @@ class _AccountsViewState extends State<AccountsView> {
                 : ListView.builder(
                     itemCount: model.accounts.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        child: Slidable(
-                          endActionPane: ActionPane(
-                            motion: const DrawerMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (context) {
-                                  showBottomSheet(context, account: model.accounts[index]);
-                                },
-                                backgroundColor: kBlueColor,
-                                foregroundColor: Colors.white,
-                                icon: Icons.edit,
-                                label: 'Edit',
-                              ),
-                              SlidableAction(
-                                onPressed: (context) {
-                                  deleteAccount(model, index, context);
-                                },
-                                backgroundColor: kErrorColor,
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete,
-                                label: 'Delete',
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                            title: Text(model.accounts[index].name),
-                            trailing: Text(model.accounts[index].balance.toString()),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AccountDetailView(account: model.accounts[index])));
+                        },
+                        child: Card(
+                          child: Slidable(
+                            endActionPane: ActionPane(
+                              motion: const DrawerMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    showBottomSheet(context, account: model.accounts[index]);
+                                  },
+                                  backgroundColor: kBlueColor,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.edit,
+                                  label: 'Edit',
+                                ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    deleteAccount(model, index, context);
+                                  },
+                                  backgroundColor: kErrorColor,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              title: Text(model.accounts[index].name),
+                              trailing: Text(model.accounts[index].balance.toString()),
+                            ),
                           ),
                         ),
                       );

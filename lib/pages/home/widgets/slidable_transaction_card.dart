@@ -9,8 +9,8 @@ import '../../../constants.dart';
 import '../../../models/account.dart';
 import '../../../models/category.dart';
 
-class TransactionCard extends StatefulWidget {
-  const TransactionCard({
+class SlidableTransactionCard extends StatefulWidget {
+  const SlidableTransactionCard({
     Key? key,
     required this.transaction,
     required this.account,
@@ -28,10 +28,10 @@ class TransactionCard extends StatefulWidget {
   final Currency currency;
 
   @override
-  State<TransactionCard> createState() => _TransactionCardState();
+  State<SlidableTransactionCard> createState() => _SlidableTransactionCardState();
 }
 
-class _TransactionCardState extends State<TransactionCard> {
+class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
   @override
   Widget build(BuildContext context) {
     var transaction = widget.transaction;

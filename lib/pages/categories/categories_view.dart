@@ -1,5 +1,7 @@
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:monify/pages/categories/categories_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:monify/pages/category_detail/category_detail_view.dart';
 import 'package:provider/provider.dart';
 import '../../constants.dart';
 import '../../models/category.dart';
@@ -66,63 +68,33 @@ class _CategoriesViewState extends State<CategoriesView> {
                 : ListView.builder(
                     itemCount: model.categories.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(model.categories[index].name),
-                        trailing: IconButton(
-                          color: kErrorColor,
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            //check if there is any transaction in this category
-                            if (model.transactions != []) {
-                              var hasTransaction =
-                                  model.transactions.any((element) => element.categoryId == model.categories[index].id);
-                              if (hasTransaction) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Delete category'),
-                                      content: const Text(
-                                          'There is a transaction in this category. You can not delete this category'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text('OK'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Delete category'),
-                                      content: const Text('Are you sure you want to delete this category?'),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text('Cancel'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text('Delete'),
-                                          onPressed: () {
-                                            _controller.deleteCategory(_model.userId, model.categories[index].id!);
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            }
-                          },
+                      return Card(
+                        child: Slidable(
+                          endActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) {
+                                  deleteCategory(model, index, context);
+                                },
+                                backgroundColor: kErrorColor,
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                                label: 'Delete',
+                              ),
+                            ],
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CategoryDetailView(category: model.categories[index])));
+                            },
+                            child: ListTile(
+                              title: Text(model.categories[index].name),
+                            ),
+                          ),
                         ),
                       );
                     },
@@ -131,6 +103,56 @@ class _CategoriesViewState extends State<CategoriesView> {
         ),
       ),
     );
+  }
+
+  void deleteCategory(CategoriesModel model, int index, BuildContext context) {
+    if (model.transactions != []) {
+      var hasTransaction = model.transactions.any((element) => element.categoryId == model.categories[index].id);
+      if (hasTransaction) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Delete category'),
+              content: const Text('There is a transaction in this category. You can not delete this category'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Delete category'),
+              content: const Text('Are you sure you want to delete this category?'),
+              actions: [
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Delete'),
+                  onPressed: () {
+                    _controller.deleteCategory(_model.userId, model.categories[index].id!);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   Widget addCategoryBottomSheet(BuildContext context) {

@@ -11,7 +11,7 @@ import '../../constants.dart';
 import '../../models/account.dart';
 import '../../models/category.dart';
 import '../home/widgets/bottom_sheet.dart';
-import '../home/widgets/transaction_card.dart';
+import '../home/widgets/slidable_transaction_card.dart';
 
 class TransactionsView extends StatefulWidget {
   TransactionsView({
@@ -82,7 +82,7 @@ class _TransactionsViewState extends State<TransactionsView> {
                   ),
                   // const SizedBox(height: 10),
                 ],
-                TransactionCard(
+                SlidableTransactionCard(
                   account: widget.accounts.firstWhere(
                     (element) => element.id == tx.accountId,
                     orElse: () => Account(

@@ -19,7 +19,7 @@ import '../transactions/transactions_view.dart';
 import 'home_model.dart';
 import 'widgets/balance_card.dart';
 import 'widgets/bottom_sheet.dart';
-import 'widgets/transaction_card.dart';
+import 'widgets/slidable_transaction_card.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -88,12 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
     ).load();
-  }
-
-  @override
-  void dispose() {
-    _interstitialAd?.dispose();
-    super.dispose();
   }
 
   double calculateBalance() {
@@ -350,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   ),
                                                 ),
                                               ],
-                                              TransactionCard(
+                                              SlidableTransactionCard(
                                                 account: account,
                                                 transaction: tx,
                                                 category: category,

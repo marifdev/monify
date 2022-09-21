@@ -8,9 +8,10 @@ import 'pages/auth/login_view.dart';
 import 'pages/home/home_view.dart';
 
 void main() async {
-  List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE"];
+  List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE", "2e9b59b8a81eeb0bcb2e0312e0a94aa3"];
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  MobileAds.instance.initialize();
 
   RequestConfiguration configuration = RequestConfiguration(testDeviceIds: testDevices);
   MobileAds.instance.updateRequestConfiguration(configuration);
@@ -19,10 +20,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  Future<InitializationStatus> _initGoogleMobileAds() {
-    return MobileAds.instance.initialize();
-  }
-
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {

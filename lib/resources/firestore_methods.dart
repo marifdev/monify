@@ -196,4 +196,38 @@ class FirestoreMethods {
       print(e.toString());
     }
   }
+
+  //get transactions by category
+  Future<List<QueryDocumentSnapshot>> getTransactionsByCategory(String uid, String categoryId) async {
+    List<QueryDocumentSnapshot> transactions = [];
+    try {
+      QuerySnapshot result = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('transactions')
+          .where('categoryId', isEqualTo: categoryId)
+          .get();
+      transactions = result.docs;
+    } catch (e) {
+      print(e.toString());
+    }
+    return transactions;
+  }
+
+  //get transactions by account
+  Future<List<QueryDocumentSnapshot>> getTransactionsByAccount(String uid, String accountId) async {
+    List<QueryDocumentSnapshot> transactions = [];
+    try {
+      QuerySnapshot result = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('transactions')
+          .where('accountId', isEqualTo: accountId)
+          .get();
+      transactions = result.docs;
+    } catch (e) {
+      print(e.toString());
+    }
+    return transactions;
+  }
 }
