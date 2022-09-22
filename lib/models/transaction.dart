@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class TransactionModel {
   String id;
   String title;
@@ -5,7 +7,10 @@ class TransactionModel {
   double amount;
   String? categoryId;
   String? accountId;
-  bool isIncome;
+  TransactionType type;
+  String? fromAccountId;
+  String? toAccountId;
+  bool? isIncome;
 
   TransactionModel({
     required this.id,
@@ -14,6 +19,8 @@ class TransactionModel {
     required this.amount,
     this.categoryId,
     this.accountId,
+    required this.type,
+    this.toAccountId,
     this.isIncome = false,
   });
 
@@ -24,6 +31,14 @@ class TransactionModel {
         amount = json['amount'].toDouble(),
         categoryId = json['categoryId'].toString(),
         accountId = json['accountId'].toString(),
+        type = json['type'] == 'income'
+            ? TransactionType.income
+            : json['type'] == 'transfer'
+                ? TransactionType.transfer
+                : json['isIncome']
+                    ? TransactionType.income
+                    : TransactionType.expense,
+        toAccountId = json['toAccountId'].toString(),
         isIncome = json['isIncome'];
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +48,19 @@ class TransactionModel {
         'amount': amount,
         'categoryId': categoryId,
         'accountId': accountId,
-        'isIncome': isIncome,
+        'type': type == TransactionType.income
+            ? 'income'
+            : type == TransactionType.transfer
+                ? 'transfer'
+                : 'expense',
+        'toAccountId': toAccountId,
       };
 }
+
+enum TransactionType { expense, income, transfer }
+
+Map<TransactionType, Color> transactionTypeColorMap = {
+  TransactionType.expense: const Color(0xFFB00020),
+  TransactionType.income: const Color(0xFF209653),
+  TransactionType.transfer: const Color(0xFF00B0F0),
+};

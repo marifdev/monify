@@ -93,9 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
   double calculateBalance() {
     double balance = 0;
     for (var transaction in _model.transactions) {
-      if (transaction.isIncome) {
+      if (transaction.type == TransactionType.income) {
         balance += transaction.amount;
-      } else {
+      } else if (transaction.type == TransactionType.expense) {
         balance -= transaction.amount;
       }
     }
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double calculateIncome() {
     double income = 0;
     for (var transaction in _model.transactions) {
-      if (transaction.isIncome) {
+      if (transaction.type == TransactionType.income) {
         income += transaction.amount;
       }
     }
@@ -115,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double calculateOutcome() {
     double outcome = 0;
     for (var element in _model.transactions) {
-      if (!element.isIncome) {
+      if (element.type == TransactionType.expense) {
         outcome += element.amount;
       }
     }
@@ -167,10 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ).then((value) {
                         _controller.refreshAccounts();
-                        print('refreshed accounts');
-                        _model.accounts.forEach((element) {
-                          print(element.name);
-                        });
                       });
                     },
                   ),
@@ -322,6 +318,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ),
                                           );
 
+                                          var toAccount = model.accounts.firstWhere(
+                                            (element) => element.id == tx.toAccountId,
+                                            orElse: () => Account(
+                                              id: '',
+                                              name: '',
+                                              balance: 0,
+                                              createdAt: '',
+                                              updatedAt: '',
+                                            ),
+                                          );
+
                                           return Column(
                                             children: [
                                               if (index == 0 ||
@@ -349,6 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 transaction: tx,
                                                 category: category,
                                                 currency: model.user.currency,
+                                                toAccount: toAccount,
                                                 onDelete: () async {
                                                   model.sortedTransactions.remove(tx);
                                                   await _controller.deleteTransaction(tx);

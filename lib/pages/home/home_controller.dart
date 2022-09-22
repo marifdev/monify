@@ -126,8 +126,12 @@ class HomeController {
     _model.setLoading(true);
     await FirestoreMethods().deleteTransaction(transaction.id, _model.user.uid).then((value) {
       refreshTransactions().then((value) {
-        updateAccount(
-            accountId: transaction.accountId!, updatedFields: {'balance': calculateBalance(transaction.accountId!)});
+        updateAccount(accountId: transaction.accountId!, updatedFields: {
+          'balance': calculateBalance(transaction.accountId!),
+        });
+        updateAccount(accountId: transaction.toAccountId!, updatedFields: {
+          'balance': calculateBalance(transaction.toAccountId!),
+        });
       });
     });
     _model.setLoading(false);
@@ -140,9 +144,14 @@ class HomeController {
   Future<void> addTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
     await FirestoreMethods().addTransaction(transaction: transaction, uid: _model.user.uid).then((value) {
-      refreshTransactions().then((value) => updateAccount(accountId: transaction.accountId!, updatedFields: {
-            'balance': calculateBalance(transaction.accountId!),
-          }));
+      refreshTransactions().then((value) {
+        updateAccount(accountId: transaction.accountId!, updatedFields: {
+          'balance': calculateBalance(transaction.accountId!),
+        });
+        updateAccount(accountId: transaction.toAccountId!, updatedFields: {
+          'balance': calculateBalance(transaction.toAccountId!),
+        });
+      });
     });
     _model.setLoading(false);
   }
@@ -151,8 +160,12 @@ class HomeController {
     _model.setLoading(true);
     await FirestoreMethods().updateTransaction(transaction: transaction, uid: _model.user.uid).then((value) {
       refreshTransactions().then((value) {
-        updateAccount(
-            accountId: transaction.accountId!, updatedFields: {'balance': calculateBalance(transaction.accountId!)});
+        updateAccount(accountId: transaction.accountId!, updatedFields: {
+          'balance': calculateBalance(transaction.accountId!),
+        });
+        updateAccount(accountId: transaction.toAccountId!, updatedFields: {
+          'balance': calculateBalance(transaction.toAccountId!),
+        });
       });
     });
     _model.setLoading(false);
@@ -183,11 +196,20 @@ class HomeController {
     double balance = 0;
     _model.transactions.forEach((element) {
       if (element.accountId == accountId) {
-        if (element.isIncome) {
-          balance += element.amount;
-        } else {
-          balance -= element.amount;
+        switch (element.type) {
+          case TransactionType.income:
+            balance += element.amount;
+            break;
+          case TransactionType.expense:
+            balance -= element.amount;
+            break;
+          case TransactionType.transfer:
+            balance -= element.amount;
+            break;
+          default:
         }
+      } else if (element.toAccountId == accountId) {
+        balance += element.amount;
       }
     });
     return balance;

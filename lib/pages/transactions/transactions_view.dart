@@ -93,6 +93,16 @@ class _TransactionsViewState extends State<TransactionsView> {
                       updatedAt: '',
                     ),
                   ),
+                  toAccount: widget.accounts.firstWhere(
+                    (element) => element.id == tx.toAccountId,
+                    orElse: () => Account(
+                      id: '',
+                      name: '',
+                      balance: 0,
+                      createdAt: '',
+                      updatedAt: '',
+                    ),
+                  ),
                   transaction: tx,
                   category: category,
                   currency: widget.currency,

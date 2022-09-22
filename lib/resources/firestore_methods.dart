@@ -52,8 +52,9 @@ class FirestoreMethods {
       var docRef = await _firestore.collection('users').doc(uid).collection('transactions').add({
         'title': transaction.title,
         'amount': transaction.amount,
-        'isIncome': transaction.isIncome,
-        'categoryId': transaction.categoryId,
+        'type': getTransactionType(transaction),
+        transaction.categoryId != null ? 'categoryId' : 'toAccountId':
+            transaction.categoryId ?? transaction.toAccountId,
         'date': transaction.date,
         'accountId': transaction.accountId,
       });
@@ -151,13 +152,27 @@ class FirestoreMethods {
       await _firestore.collection('users').doc(uid).collection('transactions').doc(transaction.id).update({
         'title': transaction.title,
         'amount': transaction.amount,
-        'isIncome': transaction.isIncome,
+        'type': getTransactionType(transaction),
         'categoryId': transaction.categoryId,
         'date': transaction.date,
         'accountId': transaction.accountId,
+        'toAccountId': transaction.toAccountId,
+        'fromAccountId': transaction.fromAccountId,
       });
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  getTransactionType(transaction) {
+    switch (transaction.type) {
+      case TransactionType.income:
+        return 'income';
+      case TransactionType.expense:
+        return 'expense';
+      case TransactionType.transfer:
+        return 'transfer';
+      default:
     }
   }
 
@@ -224,7 +239,14 @@ class FirestoreMethods {
           .collection('transactions')
           .where('accountId', isEqualTo: accountId)
           .get();
+      QuerySnapshot result2 = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('transactions')
+          .where('toAccountId', isEqualTo: accountId)
+          .get();
       transactions = result.docs;
+      transactions.addAll(result2.docs);
     } catch (e) {
       print(e.toString());
     }

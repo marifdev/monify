@@ -2,7 +2,6 @@ import 'package:monify/models/currency.dart';
 import 'package:monify/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
 
 import '../../../constants.dart';
@@ -14,6 +13,7 @@ class SlidableTransactionCard extends StatefulWidget {
     Key? key,
     required this.transaction,
     required this.account,
+    required this.toAccount,
     required this.onDelete,
     required this.onEdit,
     required this.category,
@@ -22,6 +22,7 @@ class SlidableTransactionCard extends StatefulWidget {
 
   final TransactionModel transaction;
   final Account account;
+  final Account toAccount;
   final Future<void> Function() onDelete;
   final void Function() onEdit;
   final Category category;
@@ -32,6 +33,12 @@ class SlidableTransactionCard extends StatefulWidget {
 }
 
 class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
+  @override
+  void initState() {
+    final TransactionModel transaction = widget.transaction;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var transaction = widget.transaction;
@@ -62,32 +69,63 @@ class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
         ),
         child: ListTile(
           isThreeLine: true,
-          leading: transaction.isIncome
-              ? const Icon(
-                  Icons.trending_down,
-                  textDirection: ui.TextDirection.rtl,
-                  color: kPrimaryColor,
-                )
-              : const Icon(
-                  Icons.trending_up,
-                  color: kErrorColor,
-                ),
+          leading: getLeading(transaction),
           title: Text(transaction.title),
-          trailing: transaction.isIncome
-              ? Text('${widget.currency.symbol} ${transaction.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(color: kPrimaryColor))
-              : Text('${widget.currency.symbol} ${transaction.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(color: kErrorColor)),
+          trailing: getTrailing(transaction),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.category.name),
-              const SizedBox(height: 5),
-              Text(widget.account.name),
+              if (transaction.type == TransactionType.transfer) ...[
+                Text(
+                  '${widget.account.name} to ${widget.toAccount.name}',
+                ),
+              ],
+              if (transaction.type != TransactionType.transfer) ...[
+                Text(widget.category.name),
+                const SizedBox(height: 3),
+                Text(widget.account.name),
+              ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  getLeading(TransactionModel transaction) {
+    switch (transaction.type) {
+      case TransactionType.income:
+        return const Icon(
+          Icons.trending_down,
+          textDirection: ui.TextDirection.rtl,
+          color: kPrimaryColor,
+        );
+      case TransactionType.expense:
+        return const Icon(
+          Icons.trending_up,
+          color: kErrorColor,
+        );
+      case TransactionType.transfer:
+        return const Icon(
+          Icons.compare_arrows,
+          color: kPrimaryColor,
+        );
+      default:
+    }
+  }
+
+  getTrailing(TransactionModel transaction) {
+    switch (transaction.type) {
+      case TransactionType.income:
+        return Text('${widget.currency.symbol} ${transaction.amount.toStringAsFixed(2)}',
+            style: const TextStyle(color: kPrimaryColor));
+      case TransactionType.expense:
+        return Text('${widget.currency.symbol} ${transaction.amount.toStringAsFixed(2)}',
+            style: const TextStyle(color: kErrorColor));
+      case TransactionType.transfer:
+        return Text('${widget.currency.symbol} ${transaction.amount.toStringAsFixed(2)}',
+            style: const TextStyle(color: kBlueColor));
+      default:
+    }
   }
 }

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../models/account.dart';
 import '../models/transaction.dart';
 
 class TransactionCard extends StatelessWidget {
   const TransactionCard({
     Key? key,
     required this.transaction,
+    this.account,
   }) : super(key: key);
 
   final TransactionModel transaction;
+  final Account? account;
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +39,14 @@ class TransactionCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      transaction.isIncome ? '+' : '-',
+                      findInOrOut(transaction),
                       style: TextStyle(
-                          color: transaction.isIncome ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
+                          color: transactionTypeColorMap[transaction.type], fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     Text(
                       transaction.amount.toString(),
                       style: TextStyle(
-                          color: transaction.isIncome ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
+                          color: transactionTypeColorMap[transaction.type], fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ],
                 ),
@@ -58,5 +57,20 @@ class TransactionCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String findInOrOut(TransactionModel transaction) {
+    if (transaction.type == TransactionType.income) {
+      return '+';
+    } else if (transaction.type == TransactionType.expense) {
+      return '-';
+    } else {
+      //find account from transaction.toAccountId
+      if (account!.id == transaction.toAccountId) {
+        return '+';
+      } else {
+        return '-';
+      }
+    }
   }
 }

@@ -67,7 +67,7 @@ class _AccountDetailViewState extends State<AccountDetailView> {
                               ),
                             ),
                           ],
-                          TransactionCard(transaction: transaction),
+                          TransactionCard(transaction: transaction, account: model.account),
                         ],
                       );
                     },
