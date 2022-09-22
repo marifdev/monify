@@ -58,6 +58,28 @@ class _TransactionsViewState extends State<TransactionsView> {
           children: sortedTransactions.map((tx) {
             var category = widget.categories.firstWhere(
               (element) => element.id == tx.categoryId,
+              orElse: () => Category(name: 'Select a category'),
+            );
+            var account = widget.accounts.firstWhere(
+              (element) => element.id == tx.accountId,
+              orElse: () => Account(
+                id: '',
+                name: '',
+                balance: 0,
+                createdAt: '',
+                updatedAt: '',
+              ),
+            );
+
+            var toAccount = widget.accounts.firstWhere(
+              (element) => element.id == tx.toAccountId,
+              orElse: () => Account(
+                id: '',
+                name: '',
+                balance: 0,
+                createdAt: '',
+                updatedAt: '',
+              ),
             );
             var index = sortedTransactions.indexOf(tx);
             return Column(
@@ -83,26 +105,8 @@ class _TransactionsViewState extends State<TransactionsView> {
                   // const SizedBox(height: 10),
                 ],
                 SlidableTransactionCard(
-                  account: widget.accounts.firstWhere(
-                    (element) => element.id == tx.accountId,
-                    orElse: () => Account(
-                      id: '',
-                      name: '',
-                      balance: 0,
-                      createdAt: '',
-                      updatedAt: '',
-                    ),
-                  ),
-                  toAccount: widget.accounts.firstWhere(
-                    (element) => element.id == tx.toAccountId,
-                    orElse: () => Account(
-                      id: '',
-                      name: '',
-                      balance: 0,
-                      createdAt: '',
-                      updatedAt: '',
-                    ),
-                  ),
+                  account: account,
+                  toAccount: toAccount,
                   transaction: tx,
                   category: category,
                   currency: widget.currency,

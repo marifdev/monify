@@ -13,7 +13,7 @@ class SlidableTransactionCard extends StatefulWidget {
     Key? key,
     required this.transaction,
     required this.account,
-    required this.toAccount,
+    this.toAccount,
     required this.onDelete,
     required this.onEdit,
     required this.category,
@@ -22,7 +22,7 @@ class SlidableTransactionCard extends StatefulWidget {
 
   final TransactionModel transaction;
   final Account account;
-  final Account toAccount;
+  final Account? toAccount;
   final Future<void> Function() onDelete;
   final void Function() onEdit;
   final Category category;
@@ -77,7 +77,7 @@ class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
             children: [
               if (transaction.type == TransactionType.transfer) ...[
                 Text(
-                  '${widget.account.name} to ${widget.toAccount.name}',
+                  '${widget.account.name} to ${widget.toAccount!.name}',
                 ),
               ],
               if (transaction.type != TransactionType.transfer) ...[
