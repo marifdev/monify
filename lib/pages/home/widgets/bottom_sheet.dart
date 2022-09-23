@@ -70,193 +70,196 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
               topRight: Radius.circular(20),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FractionallySizedBox(
-                widthFactor: 0.25,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                  ),
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FractionallySizedBox(
+                  widthFactor: 0.25,
                   child: Container(
-                    height: 5.0,
-                    decoration: const BoxDecoration(
-                      color: kTextLightColor,
-                      borderRadius: BorderRadius.all(Radius.circular(2.5)),
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 12.0,
+                    ),
+                    child: Container(
+                      height: 5.0,
+                      decoration: const BoxDecoration(
+                        color: kTextLightColor,
+                        borderRadius: BorderRadius.all(Radius.circular(2.5)),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              TabBar(
-                labelColor: kTextColor,
-                unselectedLabelColor: kTextColor.withOpacity(0.3),
-                indicatorColor: kPrimaryColor,
-                onTap: (index) {
-                  setState(() {
-                    _transaction.type = TransactionType.values[index];
-                  });
-                },
-                tabs: const [
-                  Tab(
-                    child: Text(
-                      'Expense',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                TabBar(
+                  labelColor: kTextColor,
+                  unselectedLabelColor: kTextColor.withOpacity(0.3),
+                  indicatorColor: kPrimaryColor,
+                  onTap: (index) {
+                    setState(() {
+                      _transaction.type = TransactionType.values[index];
+                    });
+                  },
+                  tabs: const [
+                    Tab(
+                      child: Text(
+                        'Expense',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Income',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    Tab(
+                      child: Text(
+                        'Income',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Transfer',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    Tab(
+                      child: Text(
+                        'Transfer',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Wrap(
-                children: [
-                  isLoading
-                      ? const LinearProgressIndicator()
-                      : Form(
-                          key: _formKey,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                TextFormField(
-                                  initialValue: _transaction.title,
-                                  textInputAction: TextInputAction.next,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Title',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      )),
-                                  validator: (String? value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter a title';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    _transaction.title = value;
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                TextFormField(
-                                  focusNode: amountFocusNode,
-                                  initialValue: widget.tx != null ? _transaction.amount.toString() : null,
-                                  // keyboardType: const TextInputType.numberWithOptions(signed: true),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]*)?')),
-                                  ],
-                                  textInputAction: TextInputAction.next,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Amount',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      )),
-                                  validator: (String? value) {
-                                    if (value == null || value.isEmpty || double.tryParse(value) == null) {
-                                      return 'Please enter a valid amount';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    _transaction.amount = double.parse(value);
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                if (_transaction.type != TransactionType.transfer) ...[
-                                  _transaction.categoryId != null
-                                      ? showCategorySelectedDropdown()
-                                      : showCategoryEmptyDropdown(),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                                _transaction.accountId != null
-                                    ? showAccountSelectedDropdown()
-                                    : showAccountEmptyDropdown(),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                if (_transaction.type == TransactionType.transfer) ...[
-                                  _transaction.categoryId != null
-                                      ? showToAccountSelectedDropdown()
-                                      : showToAccountEmptyDropdown(),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                                TextFormField(
-                                  controller:
-                                      TextEditingController(text: DateFormat('yyyy-MM-dd').format(_transaction.date)),
-                                  keyboardType: TextInputType.none,
-                                  textInputAction: TextInputAction.next,
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          _selectDate(context);
-                                        },
-                                        icon: const Icon(
-                                          Icons.calendar_today,
-                                        ),
-                                      ),
-                                      labelText: 'Date',
-                                      border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      )),
-                                  validator: (String? value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter a date';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 16.0),
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      if (_formKey.currentState!.validate()) {
-                                        widget.onSave(_transaction);
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Wrap(
+                  children: [
+                    isLoading
+                        ? const LinearProgressIndicator()
+                        : Form(
+                            key: _formKey,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  TextFormField(
+                                    initialValue: _transaction.title,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Title',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        )),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a title';
                                       }
+                                      return null;
                                     },
-                                    child: const Text('Submit'),
+                                    onChanged: (value) {
+                                      _transaction.title = value;
+                                    },
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextFormField(
+                                    focusNode: amountFocusNode,
+                                    initialValue: widget.tx != null ? _transaction.amount.toString() : null,
+                                    // keyboardType: const TextInputType.numberWithOptions(signed: true),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]*)?')),
+                                    ],
+                                    textInputAction: TextInputAction.next,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Amount',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        )),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty || double.tryParse(value) == null) {
+                                        return 'Please enter a valid amount';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      _transaction.amount = double.parse(value);
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  if (_transaction.type != TransactionType.transfer) ...[
+                                    _transaction.categoryId != null
+                                        ? showCategorySelectedDropdown()
+                                        : showCategoryEmptyDropdown(),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                  _transaction.accountId != null
+                                      ? showAccountSelectedDropdown()
+                                      : showAccountEmptyDropdown(),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  if (_transaction.type == TransactionType.transfer) ...[
+                                    _transaction.categoryId != null
+                                        ? showToAccountSelectedDropdown()
+                                        : showToAccountEmptyDropdown(),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                  TextFormField(
+                                    controller:
+                                        TextEditingController(text: DateFormat('yyyy-MM-dd').format(_transaction.date)),
+                                    keyboardType: TextInputType.none,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            _selectDate(context);
+                                          },
+                                          icon: const Icon(
+                                            Icons.calendar_today,
+                                          ),
+                                        ),
+                                        labelText: 'Date',
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        )),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a date';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          widget.onSave(_transaction);
+                                        }
+                                      },
+                                      child: const Text('Submit'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

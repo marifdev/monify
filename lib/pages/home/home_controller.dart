@@ -148,9 +148,11 @@ class HomeController {
         updateAccount(accountId: transaction.accountId!, updatedFields: {
           'balance': calculateBalance(transaction.accountId!),
         });
-        updateAccount(accountId: transaction.toAccountId!, updatedFields: {
-          'balance': calculateBalance(transaction.toAccountId!),
-        });
+        if (transaction.type == TransactionType.transfer) {
+          updateAccount(accountId: transaction.toAccountId!, updatedFields: {
+            'balance': calculateBalance(transaction.toAccountId!),
+          });
+        }
       });
     });
     _model.setLoading(false);
@@ -163,9 +165,11 @@ class HomeController {
         updateAccount(accountId: transaction.accountId!, updatedFields: {
           'balance': calculateBalance(transaction.accountId!),
         });
-        updateAccount(accountId: transaction.toAccountId!, updatedFields: {
-          'balance': calculateBalance(transaction.toAccountId!),
-        });
+        if (transaction.type == TransactionType.transfer) {
+          updateAccount(accountId: transaction.toAccountId!, updatedFields: {
+            'balance': calculateBalance(transaction.toAccountId!),
+          });
+        }
       });
     });
     _model.setLoading(false);

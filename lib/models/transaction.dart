@@ -21,6 +21,7 @@ class TransactionModel {
     this.accountId,
     required this.type,
     this.toAccountId,
+    this.fromAccountId,
     this.isIncome = false,
   });
 
@@ -35,10 +36,11 @@ class TransactionModel {
             ? TransactionType.income
             : json['type'] == 'transfer'
                 ? TransactionType.transfer
-                : json['isIncome']
+                : json['isIncome'] == true
                     ? TransactionType.income
                     : TransactionType.expense,
         toAccountId = json['toAccountId'].toString(),
+        fromAccountId = json['fromAccountId'].toString(),
         isIncome = json['isIncome'];
 
   Map<String, dynamic> toJson() => {
@@ -54,6 +56,7 @@ class TransactionModel {
                 ? 'transfer'
                 : 'expense',
         'toAccountId': toAccountId,
+        'fromAccountId': fromAccountId,
       };
 }
 

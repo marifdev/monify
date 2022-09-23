@@ -1,20 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:monify/constants.dart';
-import 'package:monify/pages/auth/login_view.dart';
 import 'package:monify/pages/home/home_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:launch_review/launch_review.dart';
+import 'package:monify/pages/home/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../../ad_helper.dart';
 import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
-import '../accounts/accounts_view.dart';
-import '../categories/categories_view.dart';
-import '../settings/settings_view.dart';
 import '../transactions/transactions_view.dart';
 import 'home_model.dart';
 import 'widgets/balance_card.dart';
@@ -39,16 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const MyHomePage(),
-                ),
-              );
-            },
-          );
-
           setState(() {
             _interstitialAd = ad;
           });
@@ -131,100 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text('Monify'),
           elevation: 0,
         ),
-        drawer: Drawer(
-          backgroundColor: kPrimaryColor,
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(
-                    Icons.account_balance_wallet_outlined,
-                    color: Colors.white,
-                    size: 50,
-                  ),
-                  Text(
-                    'Monify',
-                    style: TextStyle(color: Colors.white, fontSize: 50),
-                  ),
-                ],
-              ),
-              ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  ListTile(
-                    title: const Text(
-                      'Accounts',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AccountsView(),
-                        ),
-                      ).then((value) {
-                        _controller.refreshAccounts();
-                      });
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Categories',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CategoriesView(),
-                        ),
-                      ).then((value) => _controller.refreshCategories());
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Settings',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SettingsView(),
-                        ),
-                      ).then((value) => _controller.refreshUser());
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Rate us',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      LaunchReview.launch();
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginView()));
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        drawer: AppDrawer(controller: _controller),
         body: Consumer<HomeModel>(
           builder: (context, model, child) {
             return _model.isLoading
@@ -421,13 +313,14 @@ class _MyHomePageState extends State<MyHomePage> {
           tx: txToEdit,
           categories: model.categories,
           onSave: (tx) async {
-            Navigator.pop(context);
+            Navigator.pop(context, true);
             if (txToEdit == null) {
               await _controller.addTransaction(tx);
+              _controller.refreshTransactions();
             } else {
               await _controller.updateTransaction(tx);
+              _controller.refreshTransactions();
             }
-            _controller.refreshTransactions();
           },
         );
       },
