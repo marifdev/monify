@@ -1,6 +1,8 @@
 // page for all transactions
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 import 'package:monify/models/currency.dart';
 import 'package:monify/models/transaction.dart';
 import 'package:monify/resources/firestore_methods.dart';
@@ -41,7 +43,7 @@ class _TransactionsViewState extends State<TransactionsView> {
     var sortedTransactions = widget.sortedTransactions;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transactions'),
+        title: Text(LocaleKeys.transactions.tr()),
         // actions: [
         //   IconButton(
         //     onPressed: () {
@@ -58,7 +60,7 @@ class _TransactionsViewState extends State<TransactionsView> {
           children: sortedTransactions.map((tx) {
             var category = widget.categories.firstWhere(
               (element) => element.id == tx.categoryId,
-              orElse: () => Category(name: 'Select a category'),
+              orElse: () => Category(name: LocaleKeys.selectCategory.tr()),
             );
             var account = widget.accounts.firstWhere(
               (element) => element.id == tx.accountId,
@@ -85,14 +87,14 @@ class _TransactionsViewState extends State<TransactionsView> {
             return Column(
               children: [
                 if (index == 0 ||
-                    DateFormat('dd MMMM yyyy').format(tx.date) !=
-                        DateFormat('dd MMMM yyyy').format(sortedTransactions[index - 1].date)) ...[
+                    DateFormat.yMd(context.locale.toLanguageTag()).format(tx.date) !=
+                        DateFormat.yMd(context.locale.toLanguageTag()).format(sortedTransactions[index - 1].date)) ...[
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0, top: 10),
                     child: Row(
                       children: [
                         Text(
-                          DateFormat('dd MMMM yyyy').format(tx.date),
+                          DateFormat.yMd(context.locale.toLanguageTag()).format(tx.date),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

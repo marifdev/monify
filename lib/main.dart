@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'pages/auth/login_view.dart';
 import 'pages/home/home_view.dart';
@@ -11,12 +13,19 @@ void main() async {
   List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE", "2e9b59b8a81eeb0bcb2e0312e0a94aa3"];
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await EasyLocalization.ensureInitialized();
   MobileAds.instance.initialize();
 
   RequestConfiguration configuration = RequestConfiguration(testDeviceIds: testDevices);
   MobileAds.instance.updateRequestConfiguration(configuration);
 
-  runApp(const MyApp());
+  runApp(
+    EasyLocalization(
+        supportedLocales: const [Locale('en', 'US'), Locale('tr', 'TR'), Locale('de', 'DE')],
+        path: 'assets/translations', // <-- change the path of the translation files
+        fallbackLocale: const Locale('en', 'US'),
+        child: const MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +33,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       debugShowCheckedModeBanner: false,
       title: 'Monify',
       theme: ThemeData(

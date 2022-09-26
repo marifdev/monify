@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 import 'package:monify/models/currency.dart';
 import 'package:monify/models/transaction.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +56,7 @@ class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
               backgroundColor: kBlueColor,
               foregroundColor: Colors.white,
               icon: Icons.edit,
-              label: 'Edit',
+              label: LocaleKeys.edit.tr(),
             ),
             SlidableAction(
               onPressed: (context) {
@@ -63,7 +65,7 @@ class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
               backgroundColor: kErrorColor,
               foregroundColor: Colors.white,
               icon: Icons.delete,
-              label: 'Delete',
+              label: LocaleKeys.delete.tr(),
             ),
           ],
         ),
@@ -77,7 +79,7 @@ class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
             children: [
               if (transaction.type == TransactionType.transfer) ...[
                 Text(
-                  '${widget.account.name} to ${widget.toAccount!.name}',
+                  '${widget.account.name} -> ${widget.toAccount!.name}',
                 ),
               ],
               if (transaction.type != TransactionType.transfer) ...[

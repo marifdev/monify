@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:monify/constants.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 
 import '../../models/account.dart';
 import '../../models/category.dart';
@@ -35,7 +37,7 @@ class HomeController {
           _model.loadAccounts(value);
         } else {
           Account initialAccount = Account(
-            name: 'Cash',
+            name: LocaleKeys.cash.tr(),
             balance: 0,
             createdAt: DateTime.now().toString(),
             updatedAt: DateTime.now().toString(),

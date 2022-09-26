@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 import 'package:monify/pages/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +37,7 @@ class _LoginViewState extends State<LoginView> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text('Login'),
+          title: Text(LocaleKeys.login.tr()),
         ),
         body: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
@@ -63,16 +65,16 @@ class _LoginViewState extends State<LoginView> {
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(
-                            labelText: 'Email',
+                        decoration: InputDecoration(
+                            labelText: LocaleKeys.email.tr(),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
+                            return LocaleKeys.emailRequired.tr();
                           } else if (!_controller.isValidEmail(value)) {
-                            return 'Please enter a valid email';
+                            return LocaleKeys.emailInvalid.tr();
                           }
                           return null;
                         },
@@ -83,14 +85,14 @@ class _LoginViewState extends State<LoginView> {
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         textInputAction: TextInputAction.done,
-                        decoration: const InputDecoration(
-                            labelText: 'Password',
+                        decoration: InputDecoration(
+                            labelText: LocaleKeys.password.tr(),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
+                            return LocaleKeys.passwordRequired.tr();
                           }
                           return null;
                         },
@@ -114,7 +116,7 @@ class _LoginViewState extends State<LoginView> {
                                     child: const CircularProgressIndicator(
                                       color: kSecondaryColor,
                                     ))
-                                : const Text('Login');
+                                : Text(LocaleKeys.login.tr());
                           },
                         ),
                       ),
@@ -155,7 +157,7 @@ class _LoginViewState extends State<LoginView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Don\'t have an account?'),
+                    Text(LocaleKeys.dontHaveAccount.tr()),
                     TextButton(
                       onPressed: () {
                         Navigator.pushReplacement(
@@ -163,7 +165,7 @@ class _LoginViewState extends State<LoginView> {
                           MaterialPageRoute(builder: (context) => const SignupView()),
                         );
                       },
-                      child: const Text('Sign up'),
+                      child: Text(LocaleKeys.register.tr()),
                     ),
                   ],
                 )

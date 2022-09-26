@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import '../../constants.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../models/account.dart';
 import '../../models/category.dart';
 import '../account_detail/account_detail_view.dart';
@@ -42,7 +44,7 @@ class _AccountsViewState extends State<AccountsView> {
       create: ((context) => _model),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Accounts'),
+          title: Text(LocaleKeys.accounts.tr()),
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
@@ -81,7 +83,7 @@ class _AccountsViewState extends State<AccountsView> {
                                   backgroundColor: kBlueColor,
                                   foregroundColor: Colors.white,
                                   icon: Icons.edit,
-                                  label: 'Edit',
+                                  label: LocaleKeys.edit.tr(),
                                 ),
                                 SlidableAction(
                                   onPressed: (context) {
@@ -90,7 +92,7 @@ class _AccountsViewState extends State<AccountsView> {
                                   backgroundColor: kErrorColor,
                                   foregroundColor: Colors.white,
                                   icon: Icons.delete,
-                                  label: 'Delete',
+                                  label: LocaleKeys.delete.tr(),
                                 ),
                               ],
                             ),
@@ -131,11 +133,11 @@ class _AccountsViewState extends State<AccountsView> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Delete account'),
-              content: const Text('There is a transaction in this account. You can not delete this account'),
+              title: Text(LocaleKeys.deleteAccount.tr()),
+              content: Text(LocaleKeys.deleteAccountError.tr()),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('OK'),
+                  child: Text(LocaleKeys.ok.tr()),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -145,30 +147,50 @@ class _AccountsViewState extends State<AccountsView> {
           },
         );
       } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Delete account'),
-              content: const Text('Are you sure you want to delete this account?'),
-              actions: [
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                TextButton(
-                  child: const Text('Delete'),
-                  onPressed: () {
-                    _controller.deleteAccount(model.accounts[index].id!);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
-          },
-        );
+        if (model.accounts.length == 1) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(LocaleKeys.deleteAccount.tr()),
+                content: Text(LocaleKeys.oneAccountRequired.tr()),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(LocaleKeys.ok.tr()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(LocaleKeys.deleteAccount.tr()),
+                content: Text(LocaleKeys.confirmDeleteAccount.tr()),
+                actions: [
+                  TextButton(
+                    child: Text(LocaleKeys.cancel.tr()),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton(
+                    child: Text(LocaleKeys.delete.tr()),
+                    onPressed: () {
+                      _controller.deleteAccount(model.accounts[index].id!);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
       }
     }
   }
@@ -211,15 +233,15 @@ class _AccountsViewState extends State<AccountsView> {
                   account != null
                       ? TextFormField(
                           initialValue: account.name,
-                          decoration: const InputDecoration(
-                            labelText: 'Account name',
+                          decoration: InputDecoration(
+                            labelText: LocaleKeys.accountName.tr(),
                             labelStyle: TextStyle(
                               color: kTextLightColor,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter account name';
+                              return LocaleKeys.accountNameWarning.tr();
                             }
                             return null;
                           },
@@ -229,14 +251,14 @@ class _AccountsViewState extends State<AccountsView> {
                         )
                       : TextFormField(
                           textInputAction: TextInputAction.next,
-                          decoration: const InputDecoration(
-                              labelText: 'Account name',
+                          decoration: InputDecoration(
+                              labelText: LocaleKeys.accountName.tr(),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
                               )),
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a name';
+                              return LocaleKeys.accountNameWarning.tr();
                             }
                             return null;
                           },
@@ -252,14 +274,14 @@ class _AccountsViewState extends State<AccountsView> {
                           initialValue: 0.00.toString(),
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                              labelText: 'Initial Balance',
+                          decoration: InputDecoration(
+                              labelText: LocaleKeys.initialBalance.tr(),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
                               )),
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a valid amount';
+                              return LocaleKeys.enterValidAmount.tr();
                             }
                             return null;
                           },
@@ -280,7 +302,7 @@ class _AccountsViewState extends State<AccountsView> {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Text('Submit'),
+                      child: Text(LocaleKeys.save.tr()),
                     ),
                   ),
                 ],

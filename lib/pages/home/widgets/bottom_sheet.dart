@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:monify/constants.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 import 'package:monify/models/category.dart';
 import 'package:monify/models/transaction.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,11 +101,11 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                       _transaction.type = TransactionType.values[index];
                     });
                   },
-                  tabs: const [
+                  tabs: [
                     Tab(
                       child: Text(
-                        'Expense',
-                        style: TextStyle(
+                        LocaleKeys.expense.tr(),
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -111,8 +113,8 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                     ),
                     Tab(
                       child: Text(
-                        'Income',
-                        style: TextStyle(
+                        LocaleKeys.income.tr(),
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -120,7 +122,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                     ),
                     Tab(
                       child: Text(
-                        'Transfer',
+                        LocaleKeys.transfer.tr(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -146,14 +148,14 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                   TextFormField(
                                     initialValue: _transaction.title,
                                     textInputAction: TextInputAction.next,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Title',
+                                    decoration: InputDecoration(
+                                        labelText: LocaleKeys.title.tr(),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(10)),
                                         )),
                                     validator: (String? value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter a title';
+                                        return LocaleKeys.enterTitle.tr();
                                       }
                                       return null;
                                     },
@@ -173,14 +175,14 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]*)?')),
                                     ],
                                     textInputAction: TextInputAction.next,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Amount',
+                                    decoration: InputDecoration(
+                                        labelText: LocaleKeys.amount.tr(),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(10)),
                                         )),
                                     validator: (String? value) {
                                       if (value == null || value.isEmpty || double.tryParse(value) == null) {
-                                        return 'Please enter a valid amount';
+                                        return LocaleKeys.enterValidAmount.tr();
                                       }
                                       return null;
                                     },
@@ -227,13 +229,13 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                             Icons.calendar_today,
                                           ),
                                         ),
-                                        labelText: 'Date',
+                                        labelText: LocaleKeys.date.tr(),
                                         border: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(10)),
                                         )),
                                     validator: (String? value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter a date';
+                                        return LocaleKeys.enterDate.tr();
                                       }
                                       return null;
                                     },
@@ -249,7 +251,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                           widget.onSave(_transaction);
                                         }
                                       },
-                                      child: const Text('Submit'),
+                                      child: Text(LocaleKeys.save.tr()),
                                     ),
                                   ),
                                 ],
@@ -268,7 +270,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
   DropdownButtonFormField<Category> showCategoryEmptyDropdown() {
     return DropdownButtonFormField(
-      hint: const Text('Select Category'),
+      hint: Text(LocaleKeys.selectCategory.tr()),
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
       items: widget.categories.map((category) {
@@ -285,7 +287,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
       }),
       validator: (value) {
         if (value == null) {
-          return 'Please select a category';
+          return LocaleKeys.selectCategoryWarning.tr();
         }
         return null;
       },
@@ -294,7 +296,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
   DropdownButtonFormField<Category> showCategorySelectedDropdown() {
     return DropdownButtonFormField(
-      hint: const Text('Select Category'),
+      hint: Text(LocaleKeys.selectCategory.tr()),
       value: widget.categories.firstWhere((element) => element.id == _transaction.categoryId),
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
@@ -312,7 +314,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
       }),
       validator: (value) {
         if (value == null) {
-          return 'Please select a category';
+          return LocaleKeys.selectCategoryWarning.tr();
         }
         return null;
       },
@@ -321,7 +323,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
   DropdownButtonFormField<Account> showAccountEmptyDropdown() {
     return DropdownButtonFormField(
-      hint: const Text('Select Account'),
+      hint: Text(LocaleKeys.selectAccount.tr()),
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
       items: widget.accounts.map((account) {
@@ -338,7 +340,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
       }),
       validator: (value) {
         if (value == null) {
-          return 'Please select an account';
+          return LocaleKeys.selectAccountWarning.tr();
         }
         return null;
       },
@@ -347,7 +349,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
   DropdownButtonFormField<Account> showToAccountSelectedDropdown() {
     return DropdownButtonFormField(
-      hint: const Text('Select Account'),
+      hint: Text(LocaleKeys.selectAccount.tr()),
       value: widget.accounts.firstWhere((element) => element.id == _transaction.toAccountId),
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
@@ -365,9 +367,9 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
       }),
       validator: (value) {
         if (value == null) {
-          return 'Please select an account';
+          return LocaleKeys.selectAccountWarning.tr();
         } else if (value.id == _transaction.accountId) {
-          return 'Please select a different account';
+          return LocaleKeys.selectDifferentAccount.tr();
         }
         return null;
       },
@@ -376,7 +378,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
   DropdownButtonFormField<Account> showToAccountEmptyDropdown() {
     return DropdownButtonFormField(
-      hint: const Text('To Account'),
+      hint: Text(LocaleKeys.toAccount.tr()),
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
       items: widget.accounts.map((account) {
@@ -393,9 +395,9 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
       }),
       validator: (value) {
         if (value == null) {
-          return 'Please select an account';
+          return LocaleKeys.selectAccountWarning.tr();
         } else if (value.id == _transaction.accountId) {
-          return 'Please select a different account';
+          return LocaleKeys.selectDifferentAccount.tr();
         }
         return null;
       },
@@ -404,7 +406,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
   DropdownButtonFormField<Account> showAccountSelectedDropdown() {
     return DropdownButtonFormField(
-      hint: const Text('Select Account'),
+      hint: Text(LocaleKeys.selectAccount.tr()),
       value: widget.accounts.firstWhere((element) => element.id == _transaction.accountId),
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
@@ -422,9 +424,9 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
       }),
       validator: (value) {
         if (value == null) {
-          return 'Please select an account';
+          return LocaleKeys.selectAccountWarning.tr();
         } else if (value.id == _transaction.toAccountId) {
-          return 'Please select a different account';
+          return LocaleKeys.selectDifferentAccount.tr();
         }
         return null;
       },

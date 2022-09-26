@@ -1,9 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:monify/constants.dart';
 import 'package:monify/models/currency.dart';
 import 'package:monify/resources/firestore_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../generated/locale_keys.g.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({Key? key}) : super(key: key);
@@ -38,7 +41,7 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(LocaleKeys.settings.tr()),
       ),
       body: Center(
         child: ListView(
@@ -51,7 +54,7 @@ class _SettingsViewState extends State<SettingsView> {
             //   ),
             // ),
             ListTile(
-              title: const Text('Currency'),
+              title: const Text(LocaleKeys.currency).tr(),
               trailing: DropdownButton(
                 value: _usersCurrency,
                 items: kCurrencyList.map((e) {
@@ -71,9 +74,26 @@ class _SettingsViewState extends State<SettingsView> {
                 },
               ),
             ),
+            ListTile(
+              title: const Text(LocaleKeys.language).tr(),
+              trailing: DropdownButton(
+                value: context.locale,
+                items: context.supportedLocales.map((e) {
+                  return DropdownMenuItem(
+                    value: e,
+                    child: getLanguageFromCode(e),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    context.setLocale(value as Locale);
+                  });
+                },
+              ),
+            ),
             // privacy policy
             ListTile(
-              title: const Text('Privacy Policy'),
+              title: Text(LocaleKeys.privacyPolicy.tr()),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 _launchUrl(privacyUrl);
@@ -81,7 +101,7 @@ class _SettingsViewState extends State<SettingsView> {
             ),
             // terms and conditions
             ListTile(
-              title: const Text('Terms and Conditions'),
+              title: Text(LocaleKeys.termsAndConditions.tr()),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 _launchUrl(termsUrl);
@@ -91,6 +111,33 @@ class _SettingsViewState extends State<SettingsView> {
         ),
       ),
     );
+  }
+
+  Text getLanguageFromCode(Locale e) {
+    var language = 'English';
+    switch (e.languageCode) {
+      case 'en':
+        language = 'English';
+        break;
+      case 'tr':
+        language = 'Türkçe';
+        break;
+      case 'de':
+        language = 'Deutsch';
+        break;
+      case 'fr':
+        language = 'Français';
+        break;
+      case 'es':
+        language = 'Español';
+        break;
+      case 'it':
+        language = 'Italiano';
+        break;
+      default:
+        language = 'English';
+    }
+    return Text(language);
   }
 
   Future<void> _launchUrl(_url) async {

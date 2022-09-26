@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 import 'package:monify/models/currency.dart';
 import 'package:flutter/material.dart';
 
@@ -32,9 +34,9 @@ class BalanceCard extends StatelessWidget {
           padding: const EdgeInsets.all(25.0),
           child: Column(
             children: [
-              const Text(
-                'Balance',
-                style: TextStyle(
+              Text(
+                LocaleKeys.balance.tr(),
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: kTextColor,
@@ -54,9 +56,9 @@ class BalanceCard extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      const Text(
-                        'Income',
-                        style: TextStyle(
+                      Text(
+                        LocaleKeys.income.tr(),
+                        style: const TextStyle(
                           fontSize: 15,
                           color: kTextColor,
                         ),
@@ -73,9 +75,9 @@ class BalanceCard extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      const Text(
-                        'Outcome',
-                        style: TextStyle(
+                      Text(
+                        LocaleKeys.outcome.tr(),
+                        style: const TextStyle(
                           fontSize: 15,
                           color: kTextColor,
                         ),

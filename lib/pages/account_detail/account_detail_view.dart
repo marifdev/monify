@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -49,14 +50,15 @@ class _AccountDetailViewState extends State<AccountDetailView> {
                       return Column(
                         children: [
                           if (index == 0 ||
-                              DateFormat('dd MMMM yyyy').format(transaction.date) !=
-                                  DateFormat('dd MMMM yyyy').format(model.transactions[index - 1].date)) ...[
+                              DateFormat.yMd(context.locale.toLanguageTag()).format(transaction.date) !=
+                                  DateFormat.yMd(context.locale.toLanguageTag())
+                                      .format(model.transactions[index - 1].date)) ...[
                             Padding(
                               padding: const EdgeInsets.only(left: 10.0, top: 10),
                               child: Row(
                                 children: [
                                   Text(
-                                    DateFormat('dd MMMM yyyy').format(transaction.date),
+                                    DateFormat.yMd(context.locale.toLanguageTag()).format(transaction.date),
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

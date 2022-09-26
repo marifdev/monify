@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -19,6 +21,7 @@ class AuthMethods {
           'symbol': '\$',
           'code': 'USD',
         },
+        'platform': Platform.isAndroid ? 'android' : 'ios',
       });
       res = "success";
     } on FirebaseAuthException catch (e) {

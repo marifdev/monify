@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:monify/generated/locale_keys.g.dart';
 import 'package:monify/pages/categories/categories_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:monify/pages/category_detail/category_detail_view.dart';
@@ -38,7 +40,7 @@ class _CategoriesViewState extends State<CategoriesView> {
       create: ((context) => _model),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Categories'),
+          title: Text(LocaleKeys.categories.tr()),
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
@@ -80,7 +82,7 @@ class _CategoriesViewState extends State<CategoriesView> {
                                 backgroundColor: kErrorColor,
                                 foregroundColor: Colors.white,
                                 icon: Icons.delete,
-                                label: 'Delete',
+                                label: LocaleKeys.delete.tr(),
                               ),
                             ],
                           ),
@@ -113,11 +115,11 @@ class _CategoriesViewState extends State<CategoriesView> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Delete category'),
-              content: const Text('There is a transaction in this category. You can not delete this category'),
+              title: Text(LocaleKeys.delete.tr()),
+              content: Text(LocaleKeys.deleteCategoryError.tr()),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('OK'),
+                  child: Text(LocaleKeys.ok.tr()),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -131,17 +133,17 @@ class _CategoriesViewState extends State<CategoriesView> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Delete category'),
-              content: const Text('Are you sure you want to delete this category?'),
+              title: Text(LocaleKeys.delete.tr()),
+              content: Text(LocaleKeys.confirmDelete.tr()),
               actions: [
                 TextButton(
-                  child: const Text('Cancel'),
+                  child: Text(LocaleKeys.cancel.tr()),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 TextButton(
-                  child: const Text('Delete'),
+                  child: Text(LocaleKeys.delete.tr()),
                   onPressed: () {
                     _controller.deleteCategory(_model.userId, model.categories[index].id!);
                     Navigator.pop(context);

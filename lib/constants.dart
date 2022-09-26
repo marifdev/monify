@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:monify/models/currency.dart';
 import 'package:flutter/material.dart';
 
+import 'generated/locale_keys.g.dart';
 import 'models/category.dart';
 
 // colors that are used in the app
@@ -15,37 +17,37 @@ const kErrorColor = Color(0xFFB00020);
 // category list that is used in the app
 List<Category> kCategoryList = [
   Category(
-    name: 'Food',
+    name: LocaleKeys.food.tr(),
   ),
   Category(
-    name: 'Transport',
+    name: LocaleKeys.transportation.tr(),
   ),
   Category(
-    name: 'Shopping',
+    name: LocaleKeys.shopping.tr(),
   ),
   Category(
-    name: 'Entertainment',
+    name: LocaleKeys.entertainment.tr(),
   ),
   Category(
-    name: 'Rent',
+    name: LocaleKeys.rent.tr(),
   ),
   Category(
-    name: 'Salary',
+    name: LocaleKeys.salary.tr(),
   ),
   Category(
-    name: 'Gift',
+    name: LocaleKeys.gift.tr(),
   ),
   Category(
-    name: 'Car',
+    name: LocaleKeys.car.tr(),
   ),
   Category(
-    name: 'Bills',
+    name: LocaleKeys.bills.tr(),
   ),
   Category(
-    name: 'Investment',
+    name: LocaleKeys.investment.tr(),
   ),
   Category(
-    name: 'Others',
+    name: LocaleKeys.others.tr(),
   ),
 ];
 

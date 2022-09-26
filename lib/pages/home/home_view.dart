@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:monify/constants.dart';
 import 'package:monify/pages/home/home_controller.dart';
@@ -7,6 +8,7 @@ import 'package:monify/pages/home/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../../ad_helper.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
@@ -151,9 +153,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Row(
                             children: [
-                              const Text(
-                                'Recent Transactions',
-                                style: TextStyle(
+                              Text(
+                                LocaleKeys.recentTransactions.tr(),
+                                style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: kTextColor,
@@ -161,7 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               const Spacer(),
                               TextButton(
-                                child: const Text('See All'),
+                                child: Text(
+                                  LocaleKeys.seeAll.tr(),
+                                ),
                                 onPressed: () {
                                   Navigator.push(
                                     context,
@@ -197,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           var index = model.sortedTransactions.indexOf(tx);
                                           var category = model.categories.firstWhere(
                                             (element) => element.id == tx.categoryId,
-                                            orElse: () => Category(name: 'Select a category'),
+                                            orElse: () => Category(name: LocaleKeys.selectCategory.tr()),
                                           );
                                           var account = model.accounts.firstWhere(
                                             (element) => element.id == tx.accountId,
@@ -224,15 +228,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                           return Column(
                                             children: [
                                               if (index == 0 ||
-                                                  DateFormat('dd MMMM yyyy').format(tx.date) !=
-                                                      DateFormat('dd MMMM yyyy')
+                                                  DateFormat.yMd(context.locale.toLanguageTag()).format(tx.date) !=
+                                                      DateFormat.yMd(context.locale.toLanguageTag())
                                                           .format(model.sortedTransactions[index - 1].date)) ...[
                                                 Padding(
                                                   padding: const EdgeInsets.only(left: 10.0, top: 10),
                                                   child: Row(
                                                     children: [
                                                       Text(
-                                                        DateFormat('dd MMMM yyyy').format(tx.date),
+                                                        DateFormat.yMd(context.locale.toLanguageTag()).format(tx.date),
                                                         style: const TextStyle(
                                                           fontSize: 16,
                                                           fontWeight: FontWeight.bold,
@@ -288,7 +292,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               showBottomSheet(model: _model);
             },
-            tooltip: 'Add Transaction',
+            tooltip: LocaleKeys.addTransaction.tr(),
             child: const Icon(Icons.add),
           ),
         ),
@@ -315,11 +319,13 @@ class _MyHomePageState extends State<MyHomePage> {
           onSave: (tx) async {
             Navigator.pop(context, true);
             if (txToEdit == null) {
-              await _controller.addTransaction(tx);
-              _controller.refreshTransactions();
+              await _controller.addTransaction(tx).then((value) => {
+                    _controller.refreshTransactions(),
+                  });
             } else {
-              await _controller.updateTransaction(tx);
-              _controller.refreshTransactions();
+              await _controller.updateTransaction(tx).then((value) => {
+                    _controller.refreshTransactions(),
+                  });
             }
           },
         );
@@ -334,8 +340,6 @@ class _MyHomePageState extends State<MyHomePage> {
               _interstitialAd!.show();
               transactionCount = 0;
             }
-            _controller.refreshTransactions();
-            _controller.refreshCategories();
           }
         }));
   }

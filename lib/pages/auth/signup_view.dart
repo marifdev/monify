@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:monify/pages/auth/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart';
+import '../../generated/locale_keys.g.dart';
 import 'auth_controller.dart';
 import 'auth_model.dart';
 
@@ -35,7 +37,7 @@ class _SignupViewState extends State<SignupView> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text('Signup'),
+          title: Text(LocaleKeys.register.tr()),
         ),
         body: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
@@ -63,16 +65,16 @@ class _SignupViewState extends State<SignupView> {
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                            labelText: LocaleKeys.email.tr(),
+                            border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
+                            return LocaleKeys.emailRequired.tr();
                           } else if (!_controller.isValidEmail(value)) {
-                            return 'Please enter a valid email';
+                            return LocaleKeys.emailInvalid.tr();
                           }
                           return null;
                         },
@@ -83,14 +85,14 @@ class _SignupViewState extends State<SignupView> {
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         textInputAction: TextInputAction.done,
-                        decoration: const InputDecoration(
-                            labelText: 'Password',
-                            border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                            labelText: LocaleKeys.password.tr(),
+                            border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
+                            return LocaleKeys.passwordRequired.tr();
                           }
                           return null;
                         },
@@ -114,7 +116,7 @@ class _SignupViewState extends State<SignupView> {
                                     child: const CircularProgressIndicator(
                                       color: kSecondaryColor,
                                     ))
-                                : const Text('Sign up');
+                                : Text(LocaleKeys.register.tr());
                           },
                         ),
                       ),
@@ -125,7 +127,7 @@ class _SignupViewState extends State<SignupView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have an account?'),
+                    Text(LocaleKeys.alreadyHaveAccount.tr()),
                     const SizedBox(width: 5),
                     InkWell(
                       onTap: () {
@@ -135,7 +137,8 @@ class _SignupViewState extends State<SignupView> {
                           ),
                         );
                       },
-                      child: const Text('Login', style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                      child: Text(LocaleKeys.login.tr(),
+                          style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
