@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:monify/firebase_options.dart';
 
 import 'pages/auth/login_view.dart';
 import 'pages/home/home_view.dart';
 
 void main() async {
-  List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE", "2e9b59b8a81eeb0bcb2e0312e0a94aa3"];
+  // List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE", "2e9b59b8a81eeb0bcb2e0312e0a94aa3"];
+  List<String> testDevices = [];
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await EasyLocalization.ensureInitialized();
   MobileAds.instance.initialize();
 

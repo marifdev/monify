@@ -21,16 +21,18 @@
 	<key>STORAGE_BUCKET</key>
 	<string>expense-tracker-4a1a0.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:210383683572:ios:d48436991fd91a615a43a1</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-2010237322442197~1145781583</string>
 </dict>
 </plist>

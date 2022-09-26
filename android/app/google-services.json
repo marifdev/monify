@@ -7,9 +7,45 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:210383683572:android:490a01fb414ae34d5a43a1",
+        "mobilesdk_app_id": "1:210383683572:android:27fd9da3a1f0ccab5a43a1",
         "android_client_info": {
           "package_name": "com.ham.monify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "210383683572-ieppk17sn50f4f3dtprrs36hf84mvo0u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFUiyPVw92U1Qfs7j5pWs2EtIMlaAZqQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "210383683572-ieppk17sn50f4f3dtprrs36hf84mvo0u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "210383683572-afk2bv06hq5ofqb0kvitp30ribjfus7k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hamapp.monify"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:210383683572:android:490a01fb414ae34d5a43a1",
+        "android_client_info": {
+          "package_name": "com.hamapp.expense"
         }
       },
       "oauth_client": [
@@ -17,7 +53,7 @@
           "client_id": "210383683572-8n72d2uvgojts4bpi1os0739rqn8kbns.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.ham.monify",
+            "package_name": "com.hamapp.expense",
             "certificate_hash": "f090fca5c44be875e75168a6eafa21d83293664d"
           }
         },
@@ -37,6 +73,13 @@
             {
               "client_id": "210383683572-ieppk17sn50f4f3dtprrs36hf84mvo0u.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "210383683572-afk2bv06hq5ofqb0kvitp30ribjfus7k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hamapp.monify"
+              }
             }
           ]
         }
