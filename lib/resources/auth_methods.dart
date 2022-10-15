@@ -60,4 +60,14 @@ class AuthMethods {
     }
     return res;
   }
+
+  //delete user
+  Future<void> deleteUser() async {
+    try {
+      User? user = _auth.currentUser;
+      await user!.delete();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

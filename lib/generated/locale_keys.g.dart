@@ -48,6 +48,7 @@ abstract class  LocaleKeys {
   static const outcomeAmount = 'outcomeAmount';
   static const outcomeNote = 'outcomeNote';
   static const categoryName = 'categoryName';
+  static const categoryNameRequired = 'categoryNameRequired';
   static const categoryNote = 'categoryNote';
   static const tagName = 'tagName';
   static const tagNote = 'tagNote';

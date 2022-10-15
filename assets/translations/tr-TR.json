@@ -46,6 +46,7 @@
     "outcomeAmount": "Gider miktarı",
     "outcomeNote": "Gider notu",
     "categoryName": "Kategori adı",
+    "categoryNameRequired": "Kategori adı gereklidir",
     "categoryNote": "Kategori notu",
     "tagName": "Etiket adı",
     "tagNote": "Etiket notu",

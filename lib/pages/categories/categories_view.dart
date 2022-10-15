@@ -194,14 +194,14 @@ class _CategoriesViewState extends State<CategoriesView> {
                   ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                        labelText: 'Category name',
-                        border: OutlineInputBorder(
+                    decoration: InputDecoration(
+                        labelText: LocaleKeys.categoryName.tr(),
+                        border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         )),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a name';
+                        return LocaleKeys.categoryNameRequired.tr();
                       }
                       return null;
                     },
@@ -221,7 +221,7 @@ class _CategoriesViewState extends State<CategoriesView> {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Text('Submit'),
+                      child: Text(LocaleKeys.save.tr()),
                     ),
                   ),
                 ],

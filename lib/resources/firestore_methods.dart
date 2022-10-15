@@ -252,4 +252,8 @@ class FirestoreMethods {
     }
     return transactions;
   }
+
+  void deleteUser(String uid) {
+    _firestore.collection('users').doc(uid).delete();
+  }
 }

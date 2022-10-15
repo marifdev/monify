@@ -118,7 +118,12 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text('Monify'),
           elevation: 0,
         ),
-        drawer: AppDrawer(controller: _controller),
+        drawer: AppDrawer(controller: _controller, interstitialAd: _interstitialAd),
+        onDrawerChanged: (isOpened) {
+          if (!isOpened && _interstitialAd != null) {
+            _loadInterstitialAd();
+          }
+        },
         body: Consumer<HomeModel>(
           builder: (context, model, child) {
             return _model.isLoading

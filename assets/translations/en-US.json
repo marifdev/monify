@@ -46,6 +46,7 @@
     "outcomeAmount": "Outcome amount",
     "outcomeNote": "Outcome note",
     "categoryName": "Category name",
+    "categoryNameRequired": "Category name is required",
     "categoryNote": "Category note",
     "tagName": "Tag name",
     "tagNote": "Tag note",

@@ -46,6 +46,7 @@
 "outcomeAmount": "Ausgabenbetrag",
 "outcomeNote": "Ausgabennotiz",
 "categoryName": "Kategoriename",
+"categoryNameRequired": "Kategoriename erforderlich",
 "categoryNote": "Kategorienotiz",
 "tagName": "Tagname",
 "tagNote": "Tag notiz",

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/src/ad_containers.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:monify/generated/locale_keys.g.dart';
 
@@ -12,9 +13,11 @@ import '../../settings/settings_view.dart';
 import '../home_controller.dart';
 
 class AppDrawer extends StatelessWidget {
+  final InterstitialAd? interstitialAd;
   const AppDrawer({
     Key? key,
     required HomeController controller,
+    this.interstitialAd,
   })  : _controller = controller,
         super(key: key);
 
@@ -58,6 +61,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ).then((value) {
                     _controller.refreshAccounts();
+                    interstitialAd?.show();
                   });
                 },
               ),
@@ -88,7 +92,10 @@ class AppDrawer extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => const SettingsView(),
                     ),
-                  ).then((value) => _controller.refreshUser());
+                  ).then((value) {
+                    _controller.refreshUser();
+                    interstitialAd?.show();
+                  });
                 },
               ),
               ListTile(
