@@ -123,7 +123,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                     Tab(
                       child: Text(
                         LocaleKeys.transfer.tr(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -208,9 +208,9 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                     height: 20,
                                   ),
                                   if (_transaction.type == TransactionType.transfer) ...[
-                                    _transaction.categoryId != null
-                                        ? showToAccountSelectedDropdown()
-                                        : showToAccountEmptyDropdown(),
+                                    _transaction.toAccountId == null
+                                        ? showToAccountEmptyDropdown()
+                                        : showToAccountSelectedDropdown(),
                                     const SizedBox(
                                       height: 20,
                                     ),
