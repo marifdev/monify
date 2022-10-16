@@ -10,6 +10,7 @@ import '../../accounts/accounts_view.dart';
 import '../../auth/login_view.dart';
 import '../../categories/categories_view.dart';
 import '../../settings/settings_view.dart';
+import '../../statistics/statistics_view.dart';
 import '../home_controller.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -76,6 +77,21 @@ class AppDrawer extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const CategoriesView(),
+                    ),
+                  ).then((value) => _controller.refreshCategories());
+                },
+              ),
+              ListTile(
+                title: Text(
+                  LocaleKeys.statistics.tr(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const StatisticsView(),
                     ),
                   ).then((value) => _controller.refreshCategories());
                 },

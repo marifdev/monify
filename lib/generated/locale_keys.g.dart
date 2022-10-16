@@ -110,5 +110,10 @@ abstract class  LocaleKeys {
   static const gift = 'gift';
   static const car = 'car';
   static const investment = 'investment';
+  static const statistics = 'statistics';
+  static const message = 'message';
+  static const messageRequired = 'messageRequired';
+  static const success = 'success';
+  static const messageSent = 'messageSent';
 
 }

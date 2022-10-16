@@ -12,6 +12,7 @@ import '../../generated/locale_keys.g.dart';
 import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
+import '../contact/contact_view.dart';
 import '../transactions/transactions_view.dart';
 import 'home_model.dart';
 import 'widgets/balance_card.dart';
@@ -117,6 +118,15 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Monify'),
           elevation: 0,
+          actions: [
+            // contact us
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ContactView()));
+              },
+              icon: const Icon(Icons.mail_outline),
+            ),
+          ],
         ),
         drawer: AppDrawer(controller: _controller, interstitialAd: _interstitialAd),
         onDrawerChanged: (isOpened) {

@@ -256,4 +256,13 @@ class FirestoreMethods {
   void deleteUser(String uid) {
     _firestore.collection('users').doc(uid).delete();
   }
+
+  Future<void> sendMessage(String uid, String email, String message) async {
+    await _firestore.collection('messages').add({
+      'uid': uid,
+      'email': email,
+      'message': message,
+      'createdAt': DateTime.now(),
+    });
+  }
 }
