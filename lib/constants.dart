@@ -66,4 +66,5 @@ List<Currency> kCurrencyList = [
   Currency(code: 'RUB', symbol: '₽'),
   Currency(code: 'TRY', symbol: '₺'),
   Currency(code: 'MXN', symbol: '\$'),
+  Currency(code: 'PLN', symbol: 'zł'),
 ];

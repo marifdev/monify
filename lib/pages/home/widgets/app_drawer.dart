@@ -62,7 +62,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ).then((value) {
                     _controller.refreshAccounts();
-                    interstitialAd?.show();
+                    // interstitialAd?.show();
                   });
                 },
               ),
@@ -110,7 +110,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ).then((value) {
                     _controller.refreshUser();
-                    interstitialAd?.show();
+                    // interstitialAd?.show();
                   });
                 },
               ),

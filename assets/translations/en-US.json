@@ -113,5 +113,7 @@
   "message": "Message",
   "messageRequired": "Message is required",
   "success": "Success",
-  "messageSent": "Message sent successfully"
+  "messageSent": "Message sent successfully",
+  "bank": "Bank",
+  "creditCard": "Credit card"
 }

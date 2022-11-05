@@ -36,7 +36,7 @@ class _AccountDetailViewState extends State<AccountDetailView> {
         builder: (context, model, child) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(model.account.name),
+              title: Text(model.account.name.tr()),
             ),
             body: model.isLoading
                 ? const Center(

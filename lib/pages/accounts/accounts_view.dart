@@ -22,6 +22,7 @@ class _AccountsViewState extends State<AccountsView> {
     balance: 0,
     createdAt: DateTime.now().toString(),
     updatedAt: DateTime.now().toString(),
+    type: AccountType.cash,
   );
 
   late final AccountsController _controller;
@@ -97,7 +98,7 @@ class _AccountsViewState extends State<AccountsView> {
                               ],
                             ),
                             child: ListTile(
-                              title: Text(model.accounts[index].name),
+                              title: Text(model.accounts[index].name.tr()),
                               trailing: Text(model.accounts[index].balance.toString()),
                             ),
                           ),

@@ -70,6 +70,7 @@ class _TransactionsViewState extends State<TransactionsView> {
                 balance: 0,
                 createdAt: '',
                 updatedAt: '',
+                type: AccountType.cash,
               ),
             );
 
@@ -81,6 +82,7 @@ class _TransactionsViewState extends State<TransactionsView> {
                 balance: 0,
                 createdAt: '',
                 updatedAt: '',
+                type: AccountType.cash,
               ),
             );
             var index = sortedTransactions.indexOf(tx);

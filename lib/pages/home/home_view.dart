@@ -226,6 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               balance: 0,
                                               createdAt: '',
                                               updatedAt: '',
+                                              type: AccountType.cash,
                                             ),
                                           );
 
@@ -237,6 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               balance: 0,
                                               createdAt: '',
                                               updatedAt: '',
+                                              type: AccountType.cash,
                                             ),
                                           );
 
@@ -349,10 +351,10 @@ class _MyHomePageState extends State<MyHomePage> {
           if (value == true) {
             transactionCount++;
             if (transactionCount == 2 && _interstitialAd == null) {
-              _loadInterstitialAd();
+              // _loadInterstitialAd();
             }
             if (transactionCount == 3 && _interstitialAd != null) {
-              _interstitialAd!.show();
+              // _interstitialAd!.show();
               transactionCount = 0;
             }
           }

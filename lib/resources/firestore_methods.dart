@@ -94,6 +94,7 @@ class FirestoreMethods {
         'balance': account.balance,
         'createdAt': account.createdAt,
         'updatedAt': account.updatedAt,
+        'type': getAccountType(account.type),
       });
       await _firestore.collection('users').doc(uid).collection('accounts').doc(docRef.id).update({
         'id': docRef.id,

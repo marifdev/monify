@@ -146,76 +146,6 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   TextFormField(
-                                    initialValue: _transaction.title,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                        labelText: LocaleKeys.title.tr(),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        )),
-                                    validator: (String? value) {
-                                      if (value == null || value.isEmpty) {
-                                        return LocaleKeys.enterTitle.tr();
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      _transaction.title = value;
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  TextFormField(
-                                    focusNode: amountFocusNode,
-                                    initialValue: widget.tx != null ? _transaction.amount.toString() : null,
-                                    // keyboardType: const TextInputType.numberWithOptions(signed: true),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]*)?')),
-                                    ],
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                        labelText: LocaleKeys.amount.tr(),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        )),
-                                    validator: (String? value) {
-                                      if (value == null || value.isEmpty || double.tryParse(value) == null) {
-                                        return LocaleKeys.enterValidAmount.tr();
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      _transaction.amount = double.parse(value);
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  if (_transaction.type != TransactionType.transfer) ...[
-                                    _transaction.categoryId != null
-                                        ? showCategorySelectedDropdown()
-                                        : showCategoryEmptyDropdown(),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                  _transaction.accountId != null
-                                      ? showAccountSelectedDropdown()
-                                      : showAccountEmptyDropdown(),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  if (_transaction.type == TransactionType.transfer) ...[
-                                    _transaction.toAccountId == null
-                                        ? showToAccountEmptyDropdown()
-                                        : showToAccountSelectedDropdown(),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                  TextFormField(
                                     controller:
                                         TextEditingController(text: DateFormat('yyyy-MM-dd').format(_transaction.date)),
                                     keyboardType: TextInputType.none,
@@ -241,8 +171,71 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: 10,
+                                    height: 20,
                                   ),
+                                  TextFormField(
+                                    initialValue: _transaction.title,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                        labelText: LocaleKeys.title.tr(),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        )),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return LocaleKeys.enterTitle.tr();
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      _transaction.title = value;
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextFormField(
+                                    focusNode: amountFocusNode,
+                                    initialValue: widget.tx != null ? _transaction.amount.toString() : null,
+                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]+(\.[0-9]*)?')),
+                                    ],
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                        labelText: LocaleKeys.amount.tr(),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        )),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty || double.tryParse(value) == null) {
+                                        return LocaleKeys.enterValidAmount.tr();
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      _transaction.amount = double.parse(value);
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  if (_transaction.type != TransactionType.transfer) ...[
+                                    showCategoryDropdown(),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                  showAccountDropdown(),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  if (_transaction.type == TransactionType.transfer) ...[
+                                    showToAccountDropdown(),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 16.0),
                                     child: ElevatedButton(
@@ -268,9 +261,12 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
     );
   }
 
-  DropdownButtonFormField<Category> showCategoryEmptyDropdown() {
+  DropdownButtonFormField<Category> showCategoryDropdown() {
     return DropdownButtonFormField(
       hint: Text(LocaleKeys.selectCategory.tr()),
+      value: _transaction.categoryId != null
+          ? widget.categories.firstWhere((element) => element.id == _transaction.categoryId)
+          : null,
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
       items: widget.categories.map((category) {
@@ -294,63 +290,12 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
     );
   }
 
-  DropdownButtonFormField<Category> showCategorySelectedDropdown() {
-    return DropdownButtonFormField(
-      hint: Text(LocaleKeys.selectCategory.tr()),
-      value: widget.categories.firstWhere((element) => element.id == _transaction.categoryId),
-      borderRadius: const BorderRadius.all(Radius.circular(20)),
-      isExpanded: true,
-      items: widget.categories.map((category) {
-        return DropdownMenuItem(
-          value: category,
-          child: Text(category.name),
-        );
-      }).toList(),
-      onChanged: ((value) {
-        setState(() {
-          Category valueAsCategory = value as Category;
-          _transaction.categoryId = valueAsCategory.id;
-        });
-      }),
-      validator: (value) {
-        if (value == null) {
-          return LocaleKeys.selectCategoryWarning.tr();
-        }
-        return null;
-      },
-    );
-  }
-
-  DropdownButtonFormField<Account> showAccountEmptyDropdown() {
+  DropdownButtonFormField<Account> showToAccountDropdown() {
     return DropdownButtonFormField(
       hint: Text(LocaleKeys.selectAccount.tr()),
-      borderRadius: const BorderRadius.all(Radius.circular(20)),
-      isExpanded: true,
-      items: widget.accounts.map((account) {
-        return DropdownMenuItem(
-          value: account,
-          child: Text(account.name),
-        );
-      }).toList(),
-      onChanged: ((value) {
-        setState(() {
-          Account valueAsAccount = value as Account;
-          _transaction.accountId = valueAsAccount.id;
-        });
-      }),
-      validator: (value) {
-        if (value == null) {
-          return LocaleKeys.selectAccountWarning.tr();
-        }
-        return null;
-      },
-    );
-  }
-
-  DropdownButtonFormField<Account> showToAccountSelectedDropdown() {
-    return DropdownButtonFormField(
-      hint: Text(LocaleKeys.selectAccount.tr()),
-      value: widget.accounts.firstWhere((element) => element.id == _transaction.toAccountId),
+      value: _transaction.toAccountId != null
+          ? widget.accounts.firstWhere((element) => element.id == _transaction.toAccountId)
+          : null,
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
       items: widget.accounts.map((account) {
@@ -376,38 +321,12 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
     );
   }
 
-  DropdownButtonFormField<Account> showToAccountEmptyDropdown() {
-    return DropdownButtonFormField(
-      hint: Text(LocaleKeys.toAccount.tr()),
-      borderRadius: const BorderRadius.all(Radius.circular(20)),
-      isExpanded: true,
-      items: widget.accounts.map((account) {
-        return DropdownMenuItem(
-          value: account,
-          child: Text(account.name),
-        );
-      }).toList(),
-      onChanged: ((value) {
-        setState(() {
-          Account valueAsAccount = value as Account;
-          _transaction.toAccountId = valueAsAccount.id;
-        });
-      }),
-      validator: (value) {
-        if (value == null) {
-          return LocaleKeys.selectAccountWarning.tr();
-        } else if (value.id == _transaction.accountId) {
-          return LocaleKeys.selectDifferentAccount.tr();
-        }
-        return null;
-      },
-    );
-  }
-
-  DropdownButtonFormField<Account> showAccountSelectedDropdown() {
+  DropdownButtonFormField<Account> showAccountDropdown() {
     return DropdownButtonFormField(
       hint: Text(LocaleKeys.selectAccount.tr()),
-      value: widget.accounts.firstWhere((element) => element.id == _transaction.accountId),
+      value: _transaction.accountId != null
+          ? widget.accounts.firstWhere((element) => element.id == _transaction.accountId)
+          : null,
       borderRadius: const BorderRadius.all(Radius.circular(20)),
       isExpanded: true,
       items: widget.accounts.map((account) {

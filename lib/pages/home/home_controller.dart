@@ -37,10 +37,11 @@ class HomeController {
           _model.loadAccounts(value);
         } else {
           Account initialAccount = Account(
-            name: LocaleKeys.cash.tr(),
+            name: 'cash',
             balance: 0,
             createdAt: DateTime.now().toString(),
             updatedAt: DateTime.now().toString(),
+            type: AccountType.cash,
           );
           addAccount(initialAccount, user.uid);
           _model.loadAccounts([initialAccount]);

@@ -5,6 +5,7 @@ class Account {
   double balance;
   String createdAt;
   String updatedAt;
+  AccountType type;
 
   Account({
     this.id,
@@ -13,6 +14,7 @@ class Account {
     required this.balance,
     required this.createdAt,
     required this.updatedAt,
+    required this.type,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) => Account(
@@ -22,6 +24,7 @@ class Account {
         balance: json["balance"].toDouble(),
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
+        type: getAccountType(json["type"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,5 +34,34 @@ class Account {
         "balance": balance,
         "createdAt": createdAt,
         "updatedAt": updatedAt,
+        "type": getAccountType(type),
       };
+}
+
+getAccountType(type) {
+  if (type is AccountType) {
+    switch (type) {
+      case AccountType.cash:
+        return 'cash';
+      case AccountType.bank:
+        return 'bank';
+      case AccountType.creditCard:
+        return 'creditCard';
+    }
+  } else {
+    switch (type) {
+      case 'cash':
+        return AccountType.cash;
+      case 'bank':
+        return AccountType.bank;
+      case 'creditCard':
+        return AccountType.creditCard;
+    }
+  }
+}
+
+enum AccountType {
+  cash,
+  bank,
+  creditCard,
 }

@@ -32,13 +32,11 @@ class TransactionModel {
         amount = json['amount'].toDouble(),
         categoryId = json['categoryId'].toString(),
         accountId = json['accountId'].toString(),
-        type = json['type'] == 'income'
-            ? TransactionType.income
-            : json['type'] == 'transfer'
-                ? TransactionType.transfer
-                : json['isIncome'] == true
-                    ? TransactionType.income
-                    : TransactionType.expense,
+        type = json['type'] != null
+            ? getTransactionType(json['type'])
+            : json['isIncome']
+                ? TransactionType.income
+                : TransactionType.expense,
         toAccountId = json['toAccountId'].toString(),
         fromAccountId = json['fromAccountId'].toString(),
         isIncome = json['isIncome'];
@@ -50,20 +48,43 @@ class TransactionModel {
         'amount': amount,
         'categoryId': categoryId,
         'accountId': accountId,
-        'type': type == TransactionType.income
-            ? 'income'
-            : type == TransactionType.transfer
-                ? 'transfer'
-                : 'expense',
+        'type': getTransactionType(type),
         'toAccountId': toAccountId,
         'fromAccountId': fromAccountId,
       };
 }
 
-enum TransactionType { expense, income, transfer }
+getTransactionType(type) {
+  if (type is TransactionType) {
+    switch (type) {
+      case TransactionType.income:
+        return 'income';
+      case TransactionType.expense:
+        return 'expense';
+      case TransactionType.transfer:
+        return 'transfer';
+      case TransactionType.payment:
+        return 'payment';
+    }
+  } else if (type is String) {
+    switch (type) {
+      case 'income':
+        return TransactionType.income;
+      case 'expense':
+        return TransactionType.expense;
+      case 'transfer':
+        return TransactionType.transfer;
+      case 'payment':
+        return TransactionType.payment;
+    }
+  }
+}
+
+enum TransactionType { expense, income, transfer, payment }
 
 Map<TransactionType, Color> transactionTypeColorMap = {
   TransactionType.expense: const Color(0xFFB00020),
   TransactionType.income: const Color(0xFF209653),
   TransactionType.transfer: const Color(0xFF00B0F0),
+  TransactionType.payment: const Color(0xFFB00020),
 };

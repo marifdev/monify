@@ -112,5 +112,7 @@
   "message": "Mesaj",
   "messageRequired": "Mesaj gereklidir",
   "success": "Başarılı",
-  "messageSent": "Mesajınız gönderildi"
+  "messageSent": "Mesajınız gönderildi",
+  "bank": "Banka",
+  "creditCard": "Kredi kartı"
 }

@@ -115,5 +115,7 @@ abstract class  LocaleKeys {
   static const messageRequired = 'messageRequired';
   static const success = 'success';
   static const messageSent = 'messageSent';
+  static const bank = 'bank';
+  static const creditCard = 'creditCard';
 
 }
