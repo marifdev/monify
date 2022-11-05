@@ -1,3 +1,4 @@
+import 'package:adapty_flutter/adapty_flutter.dart';
 import 'package:monify/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:monify/firebase_options.dart';
+import 'package:monify/pages/base/base_view.dart';
+import 'package:monify/pages/onboarding/onboarding_view.dart';
 
 import 'pages/auth/login_view.dart';
 import 'pages/home/home_view.dart';
@@ -19,7 +22,10 @@ void main() async {
 
   RequestConfiguration configuration = RequestConfiguration(testDeviceIds: testDevices);
   MobileAds.instance.updateRequestConfiguration(configuration);
-
+  Adapty.activate();
+  //  final installId = await Service.getOrCreateInstallId();
+  //  await Adapty.identify(***customer-user-id***);
+  //  await Adapty.setLogLevel(AdaptyLogLevel.verbose);
   runApp(
     EasyLocalization(
         supportedLocales: const [Locale('en', 'US'), Locale('tr', 'TR'), Locale('de', 'DE')],
@@ -44,13 +50,20 @@ class MyApp extends StatelessWidget {
           primary: kPrimaryColor,
           secondary: kPrimaryColor,
         ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: kPrimaryColor,
+          unselectedItemColor: Colors.grey,
+          showUnselectedLabels: true,
+          type: BottomNavigationBarType.shifting,
+          enableFeedback: true,
+        ),
       ),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             if (snapshot.hasData) {
-              return const MyHomePage();
+              return const BaseView();
             } else if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong'));
             }
@@ -61,7 +74,7 @@ class MyApp extends StatelessWidget {
               color: kPrimaryColor,
             ));
           }
-          return const LoginView();
+          return const OnboardingView();
         },
       ),
     );

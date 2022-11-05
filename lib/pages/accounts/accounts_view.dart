@@ -9,6 +9,7 @@ import '../../models/category.dart';
 import '../account_detail/account_detail_view.dart';
 import 'accounts_controller.dart';
 import 'accounts_model.dart';
+import 'add_account_view.dart';
 
 class AccountsView extends StatefulWidget {
   const AccountsView({Key? key}) : super(key: key);
@@ -50,7 +51,13 @@ class _AccountsViewState extends State<AccountsView> {
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                showBottomSheet(context);
+                // showBottomSheet(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddAccountView(),
+                  ),
+                );
               },
             ),
           ],

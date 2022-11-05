@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  adapty_flutter: ^1.0.14
   cloud_firestore: ^3.4.6
   cupertino_icons: ^1.0.2
   d_chart: ^0.1.0
@@ -39,11 +40,13 @@ dependencies:
     sdk: flutter
   flutter_native_splash: ^2.2.9
   flutter_slidable: ^2.0.0
+  flutter_svg: ^1.1.6
   google_mobile_ads: ^2.0.1
   in_app_purchase: ^3.0.7
   intl: ^0.17.0
   launch_review: ^3.0.1
   provider: ^6.0.3
+  smooth_page_indicator: ^1.0.0+2
   url_launcher: ^6.1.5
 
 dev_dependencies:
@@ -79,6 +82,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/translations/
+    - assets/onboarding.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

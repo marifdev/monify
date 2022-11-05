@@ -118,22 +118,22 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Monify'),
           elevation: 0,
-          actions: [
-            // contact us
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ContactView()));
-              },
-              icon: const Icon(Icons.mail_outline),
-            ),
-          ],
+          // actions: [
+          //   // contact us
+          //   IconButton(
+          //     onPressed: () {
+          //       Navigator.push(context, MaterialPageRoute(builder: (context) => ContactView()));
+          //     },
+          //     icon: const Icon(Icons.mail_outline),
+          //   ),
+          // ],
         ),
-        drawer: AppDrawer(controller: _controller, interstitialAd: _interstitialAd),
-        onDrawerChanged: (isOpened) {
-          if (!isOpened && _interstitialAd != null) {
-            _loadInterstitialAd();
-          }
-        },
+        // drawer: AppDrawer(controller: _controller, interstitialAd: _interstitialAd),
+        // onDrawerChanged: (isOpened) {
+        //   if (!isOpened && _interstitialAd != null) {
+        //     _loadInterstitialAd();
+        //   }
+        // },
         body: Consumer<HomeModel>(
           builder: (context, model, child) {
             return _model.isLoading
@@ -241,7 +241,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                               type: AccountType.cash,
                                             ),
                                           );
-
                                           return Column(
                                             children: [
                                               if (index == 0 ||
