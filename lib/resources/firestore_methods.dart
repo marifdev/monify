@@ -266,4 +266,10 @@ class FirestoreMethods {
       'createdAt': DateTime.now(),
     });
   }
+
+  Future<void> updateUserSubscriptionStatus(String uid, bool isSubscribed) async {
+    await _firestore.collection('users').doc(uid).update({
+      'isPremium': isSubscribed,
+    });
+  }
 }

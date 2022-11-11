@@ -114,5 +114,10 @@
   "success": "Başarılı",
   "messageSent": "Mesajınız gönderildi",
   "bank": "Banka",
-  "creditCard": "Kredi kartı"
+  "bankAccount": "Banka Hesabı",
+  "creditCard": "Kredi kartı",
+  "accountTypeRequired": "Hesap türü gereklidir",
+  "repeat": "Tekrarla",
+  "comingSoon": "Yakında",
+  "bePremium": "Premium kullanıcı ol"
 }

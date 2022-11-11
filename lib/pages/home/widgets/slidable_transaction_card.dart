@@ -49,15 +49,15 @@ class _SlidableTransactionCardState extends State<SlidableTransactionCard> {
         endActionPane: ActionPane(
           motion: const DrawerMotion(),
           children: [
-            SlidableAction(
-              onPressed: (context) {
-                widget.onEdit();
-              },
-              backgroundColor: kBlueColor,
-              foregroundColor: Colors.white,
-              icon: Icons.edit,
-              label: LocaleKeys.edit.tr(),
-            ),
+            // SlidableAction(
+            //   onPressed: (context) {
+            //     widget.onEdit();
+            //   },
+            //   backgroundColor: kBlueColor,
+            //   foregroundColor: Colors.white,
+            //   icon: Icons.edit,
+            //   label: LocaleKeys.edit.tr(),
+            // ),
             SlidableAction(
               onPressed: (context) {
                 widget.onDelete();

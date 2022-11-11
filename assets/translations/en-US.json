@@ -115,5 +115,10 @@
   "success": "Success",
   "messageSent": "Message sent successfully",
   "bank": "Bank",
-  "creditCard": "Credit card"
+  "bankAccount": "Bank account",
+  "creditCard": "Credit card",
+  "accountTypeRequired": "Account type is required",
+  "repeat": "Repeat",
+  "comingSoon": "Coming soon",
+  "bePremium": "Activate premium features"
 }

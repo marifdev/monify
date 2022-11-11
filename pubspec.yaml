@@ -27,7 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  adapty_flutter: ^1.0.14
+  animated_bottom_navigation_bar: ^1.1.0
   cloud_firestore: ^3.4.6
   cupertino_icons: ^1.0.2
   d_chart: ^0.1.0
@@ -46,6 +46,7 @@ dependencies:
   intl: ^0.17.0
   launch_review: ^3.0.1
   provider: ^6.0.3
+  purchases_flutter: ^4.4.0
   smooth_page_indicator: ^1.0.0+2
   url_launcher: ^6.1.5
 

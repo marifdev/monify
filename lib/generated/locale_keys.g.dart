@@ -116,6 +116,11 @@ abstract class  LocaleKeys {
   static const success = 'success';
   static const messageSent = 'messageSent';
   static const bank = 'bank';
+  static const bankAccount = 'bankAccount';
   static const creditCard = 'creditCard';
+  static const accountTypeRequired = 'accountTypeRequired';
+  static const repeat = 'repeat';
+  static const comingSoon = 'comingSoon';
+  static const bePremium = 'bePremium';
 
 }

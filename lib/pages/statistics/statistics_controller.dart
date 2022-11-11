@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:monify/pages/base/base_model.dart';
 import 'package:monify/pages/statistics/statistics_model.dart';
 
 import '../../models/category.dart';
@@ -7,13 +8,16 @@ import '../../resources/firestore_methods.dart';
 
 class StatisticsController {
   final StatisticsModel _model;
-  StatisticsController(this._model);
+  final BaseModel _baseModel;
+  StatisticsController(this._model, this._baseModel);
 
   void init() async {
     _model.setLoading(true);
     _model.setUserId(FirebaseAuth.instance.currentUser!.uid);
-    getCategories(_model.userId).then((value) => _model.loadCategories(value));
-    getTransactions(_model.userId).then((value) => _model.loadTransactions(value));
+    // getCategories(_model.userId).then((value) => _model.loadCategories(value));
+    // getTransactions(_model.userId).then((value) => _model.loadTransactions(value));
+    _model.loadCategories(_baseModel.user!.categories!);
+    _model.loadTransactions(_baseModel.user!.transactions!);
     _model.setLoading(false);
   }
 
@@ -76,14 +80,14 @@ class StatisticsController {
 
   Future<double> calculateCategoryIncomeTotal(Category category) async {
     double total = 0;
-    var transactions = await getTransactionsByCategory(_model.userId, category);
+    var transactions = _model.transactions.where((element) => element.categoryId == category.id).toList();
     total = getTotalIncomeAmountByCategory(transactions);
     return total;
   }
 
   Future<double> calculateCategoryExpenseTotal(Category category) async {
     double total = 0;
-    var transactions = await getTransactionsByCategory(_model.userId, category);
+    var transactions = _model.transactions.where((element) => element.categoryId == category.id).toList();
     total = getTotalExpenseAmountByCategory(transactions);
     return total;
   }

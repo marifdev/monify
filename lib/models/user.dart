@@ -1,3 +1,4 @@
+import 'package:monify/models/account.dart';
 import 'package:monify/models/category.dart';
 import 'package:monify/models/currency.dart';
 import 'package:monify/models/transaction.dart';
@@ -9,6 +10,8 @@ class UserModel {
   final Currency currency;
   List<Category>? categories;
   List<TransactionModel>? transactions;
+  List<Account>? accounts;
+  bool isPremium;
 
   UserModel({
     required this.uid,
@@ -17,6 +20,8 @@ class UserModel {
     required this.currency,
     this.categories,
     this.transactions,
+    this.accounts,
+    this.isPremium = false,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +35,8 @@ class UserModel {
       transactions: json['transactions'] != null
           ? (json['transactions'] as List).map((e) => TransactionModel.fromJson(e)).toList()
           : null,
+      accounts: json['accounts'] != null ? (json['accounts'] as List).map((e) => Account.fromJson(e)).toList() : null,
+      isPremium: json['isPremium'] ?? false,
     );
   }
 
@@ -41,6 +48,8 @@ class UserModel {
       'currency': currency,
       'categories': categories,
       'transactions': transactions,
+      'accounts': accounts,
+      'isPremium': isPremium,
     };
   }
 }

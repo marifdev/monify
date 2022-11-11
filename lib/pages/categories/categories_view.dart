@@ -7,6 +7,7 @@ import 'package:monify/pages/category_detail/category_detail_view.dart';
 import 'package:provider/provider.dart';
 import '../../constants.dart';
 import '../../models/category.dart';
+import '../base/base_model.dart';
 import 'categories_model.dart';
 
 class CategoriesView extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:monify/pages/auth/auth_model.dart';
 import 'package:flutter/material.dart';
+import 'package:monify/pages/base/base_view.dart';
 
 import '../../resources/auth_methods.dart';
 import '../home/home_view.dart';
@@ -16,7 +17,7 @@ class AuthController {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const MyHomePage(),
+          builder: (context) => const BaseView(),
         ),
       );
       _model.setIsLoading = false;
@@ -35,7 +36,7 @@ class AuthController {
     if (res == 'success') {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MyHomePage()),
+        MaterialPageRoute(builder: (context) => const BaseView()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

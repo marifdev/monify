@@ -24,7 +24,7 @@ class Account {
         balance: json["balance"].toDouble(),
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
-        type: getAccountType(json["type"]),
+        type: json['type'] != null ? getAccountType(json["type"]) : AccountType.cash,
       );
 
   Map<String, dynamic> toJson() => {

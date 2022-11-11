@@ -47,4 +47,9 @@ class AccountsModel extends ChangeNotifier {
     isLoading = _isLoading;
     notifyListeners();
   }
+
+  void sortAccountsByType() {
+    accounts.sort((a, b) => a.type.index.compareTo(b.type.index));
+    notifyListeners();
+  }
 }

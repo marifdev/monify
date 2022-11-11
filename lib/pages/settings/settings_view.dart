@@ -1,17 +1,24 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:monify/constants.dart';
 import 'package:monify/models/currency.dart';
 import 'package:monify/pages/auth/login_view.dart';
+import 'package:monify/pages/base/base_model.dart';
+import 'package:monify/pages/onboarding/onboarding_view.dart';
+import 'package:monify/pages/onboarding/paywall_screen.dart';
 import 'package:monify/resources/auth_methods.dart';
 import 'package:monify/resources/firestore_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../generated/locale_keys.g.dart';
+import '../categories/categories_view.dart';
 
 class SettingsView extends StatefulWidget {
-  const SettingsView({Key? key}) : super(key: key);
+  final BaseModel model;
+  const SettingsView({Key? key, required this.model}) : super(key: key);
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
@@ -20,6 +27,7 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   Currency? _usersCurrency;
   bool isUpdated = false;
+  bool isPremium = false;
   final Uri privacyUrl = Uri.parse('https://pages.flycricket.io/expense-tracker-11/privacy.html');
   final Uri termsUrl = Uri.parse('https://pages.flycricket.io/expense-tracker-11/terms.html');
 
@@ -28,11 +36,12 @@ class _SettingsViewState extends State<SettingsView> {
   void initState() {
     super.initState();
     _getCurrency();
+    isPremium = widget.model.user!.isPremium;
   }
 
-  void _getCurrency() {
+  void _getCurrency() async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    FirestoreMethods().getUser(userId).then((user) {
+    await FirestoreMethods().getUser(userId).then((user) {
       setState(() {
         _usersCurrency = user.currency;
       });
@@ -41,117 +50,190 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(LocaleKeys.settings.tr()),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            ListView(
-              shrinkWrap: true,
-              children: [
-                // ListTile(
-                //   title: const Text('Dark Mode'),
-                //   trailing: Switch(
-                //     value: true,
-                //     onChanged: (value) {},
-                //   ),
-                // ),
-                ListTile(
-                  title: const Text(LocaleKeys.currency).tr(),
-                  trailing: DropdownButton(
-                    value: _usersCurrency,
-                    items: kCurrencyList.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(e.code),
+    return ChangeNotifierProvider(
+      create: ((context) => widget.model),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(LocaleKeys.settings.tr()),
+        ),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              ListView(
+                shrinkWrap: true,
+                children: [
+                  // ListTile(
+                  //   title: const Text('Dark Mode'),
+                  //   trailing: Switch(
+                  //     value: isDark,
+                  //     onChanged: (value) {
+                  //       value = !value;
+                  //       value ? ThemeMode.dark : ThemeMode.light;
+                  //     },
+                  //   ),
+                  // ),
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.currency_exchange),
+                    title: const Text(LocaleKeys.currency).tr(),
+                    trailing: DropdownButton(
+                      value: _usersCurrency,
+                      items: kCurrencyList.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(e.code),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _usersCurrency = value as Currency?;
+                          FirestoreMethods().updateUser(updatedFields: {
+                            'currency': _usersCurrency!.toJson(),
+                          }, uid: FirebaseAuth.instance.currentUser!.uid);
+                          isUpdated = true;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.language),
+                    title: const Text(LocaleKeys.language).tr(),
+                    trailing: DropdownButton(
+                      value: context.locale,
+                      items: context.supportedLocales.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: getLanguageFromCode(e),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          context.setLocale(value as Locale);
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.category),
+                    title: Text(
+                      LocaleKeys.categories.tr(),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CategoriesView(),
+                        ),
                       );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _usersCurrency = value as Currency?;
-                        FirestoreMethods().updateUser(updatedFields: {
-                          'currency': _usersCurrency!.toJson(),
-                        }, uid: FirebaseAuth.instance.currentUser!.uid);
-                        isUpdated = true;
-                      });
                     },
                   ),
-                ),
-                ListTile(
-                  title: const Text(LocaleKeys.language).tr(),
-                  trailing: DropdownButton(
-                    value: context.locale,
-                    items: context.supportedLocales.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: getLanguageFromCode(e),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        context.setLocale(value as Locale);
-                      });
+                  // privacy policy
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.privacy_tip),
+                    title: Text(LocaleKeys.privacyPolicy.tr()),
+                    trailing: const Icon(Icons.arrow_forward),
+                    onTap: () {
+                      _launchUrl(privacyUrl);
                     },
                   ),
-                ),
-                // privacy policy
-                ListTile(
-                  title: Text(LocaleKeys.privacyPolicy.tr()),
-                  trailing: const Icon(Icons.arrow_forward),
-                  onTap: () {
-                    _launchUrl(privacyUrl);
-                  },
-                ),
-                // terms and conditions
-                ListTile(
-                  title: Text(LocaleKeys.termsAndConditions.tr()),
-                  trailing: const Icon(Icons.arrow_forward),
-                  onTap: () {
-                    _launchUrl(termsUrl);
-                  },
-                ),
-              ],
-            ),
-            const Spacer(),
-            ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(LocaleKeys.confirmDelete.tr()),
-                        content: Text(LocaleKeys.deleteAccount.tr()),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text(LocaleKeys.cancel.tr()),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: Text(LocaleKeys.delete.tr()),
-                            onPressed: () {
-                              var user = FirebaseAuth.instance.currentUser;
-                              FirestoreMethods().deleteUser(user!.uid);
-                              AuthMethods().deleteUser();
-                              FirebaseAuth.instance.signOut();
-                              // Navigator.of(context).pop();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (context) => const LoginView()),
-                                (Route<dynamic> route) => false,
-                              );
-                            },
-                          ),
-                        ],
+                  // terms and conditions
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.description),
+                    title: Text(LocaleKeys.termsAndConditions.tr()),
+                    trailing: const Icon(Icons.arrow_forward),
+                    onTap: () {
+                      _launchUrl(termsUrl);
+                    },
+                  ),
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.star),
+                    title: Text(
+                      LocaleKeys.rateUs.tr(),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      LaunchReview.launch(iOSAppId: '6443472705');
+                    },
+                  ),
+                  if (!isPremium)
+                    ListTile(
+                      minLeadingWidth: 0,
+                      leading: const Icon(Icons.lock),
+                      title: Text(
+                        LocaleKeys.bePremium.tr(),
+                      ),
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isDismissible: false,
+                          builder: (context) => PaywallScreen(model: widget.model),
+                        );
+                      },
+                    ),
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.logout),
+                    title: Text(
+                      LocaleKeys.logout.tr(),
+                    ),
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                          context, MaterialPageRoute(builder: (context) => const OnboardingView()));
+                    },
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(LocaleKeys.confirmDelete.tr()),
+                            content: Text(LocaleKeys.deleteAccount.tr()),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(LocaleKeys.cancel.tr()),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Text(LocaleKeys.delete.tr()),
+                                onPressed: () {
+                                  var user = FirebaseAuth.instance.currentUser;
+                                  FirestoreMethods().deleteUser(user!.uid);
+                                  AuthMethods().deleteUser();
+                                  FirebaseAuth.instance.signOut();
+                                  // Navigator.of(context).pop();
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const LoginView()),
+                                    (Route<dynamic> route) => false,
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-                child: Text(LocaleKeys.deleteAccount.tr()))
-          ],
+                    child: Text(LocaleKeys.deleteAccount.tr())),
+              )
+            ],
+          ),
         ),
       ),
     );
