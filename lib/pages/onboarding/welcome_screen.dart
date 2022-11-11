@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:monify/pages/auth/login_view.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({

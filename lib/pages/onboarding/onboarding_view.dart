@@ -40,24 +40,24 @@ class _OnboardingViewState extends State<OnboardingView> {
               ],
             ),
           ),
-          SmoothPageIndicator(
-            controller: controller,
-            count: 2,
-            effect: const WormEffect(
-              activeDotColor: kPrimaryColor,
-            ),
-          ),
-          // Spacer(),
-          // ElevatedButton(
-          //   onPressed: () => {
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const LoginView()),
-          //     )
-          //   },
-          //   child: Text('Get Started'),
+          // SmoothPageIndicator(
+          //   controller: controller,
+          //   count: 1,
+          //   effect: const WormEffect(
+          //     activeDotColor: kPrimaryColor,
+          //   ),
           // ),
           // Spacer(),
+          ElevatedButton(
+            onPressed: () => {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginView()),
+              )
+            },
+            child: Text('Get Started'),
+          ),
+          Spacer(),
         ],
       ),
     );
