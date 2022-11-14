@@ -17,36 +17,47 @@ const kErrorColor = Color(0xFFB00020);
 // category list that is used in the app
 List<Category> kCategoryList = [
   Category(
+    id: '1',
     name: LocaleKeys.food.tr(),
   ),
   Category(
+    id: '2',
     name: LocaleKeys.transportation.tr(),
   ),
   Category(
+    id: '3',
     name: LocaleKeys.shopping.tr(),
   ),
   Category(
+    id: '4',
     name: LocaleKeys.entertainment.tr(),
   ),
   Category(
+    id: '5',
     name: LocaleKeys.rent.tr(),
   ),
   Category(
+    id: '6',
     name: LocaleKeys.salary.tr(),
   ),
   Category(
+    id: '7',
     name: LocaleKeys.gift.tr(),
   ),
   Category(
+    id: '8',
     name: LocaleKeys.car.tr(),
   ),
   Category(
+    id: '9',
     name: LocaleKeys.bills.tr(),
   ),
   Category(
+    id: '10',
     name: LocaleKeys.investment.tr(),
   ),
   Category(
+    id: '11',
     name: LocaleKeys.others.tr(),
   ),
 ];
