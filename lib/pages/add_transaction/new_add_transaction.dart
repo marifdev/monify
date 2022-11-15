@@ -19,8 +19,8 @@ class AddTransaction extends StatefulWidget {
 class _AddTransactionState extends State<AddTransaction> {
   String _amountValue = '0';
   bool dateSelected = false;
-  bool categorySelected = false;
-  bool noteSelected = true;
+  bool categorySelected = true;
+  bool noteSelected = false;
   bool repeatSelected = false;
   TransactionModel transaction = TransactionModel(
     id: '',
@@ -349,6 +349,36 @@ class _AddTransactionState extends State<AddTransaction> {
                   itemBuilder: (context, index) {
                     return Row(
                       children: [
+                        if (index == 0) ...[
+                          InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: () {
+                              // setState(() {
+                              //   transaction.categoryId = kCategoryList[index].id;
+                              // });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                // color: transaction.categoryId == kCategoryList[index].id
+                                //     ? kPrimaryColor
+                                //     : Colors.black.withOpacity(0.1),
+                                border: Border.all(color: kPrimaryColor),
+                                borderRadius: BorderRadius.circular(8),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  LocaleKeys.edit.tr(),
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                        ],
                         InkWell(
                           borderRadius: BorderRadius.circular(8),
                           onTap: () {
