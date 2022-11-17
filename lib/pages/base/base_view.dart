@@ -1,5 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:monify/constants.dart';
@@ -10,7 +11,10 @@ import 'package:monify/pages/settings/settings_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../ad_helper.dart';
+import '../../models/user.dart';
+import '../../resources/firestore_methods.dart';
 import '../add_transaction/add_transaction_view.dart';
+import '../add_transaction/new_add_transaction.dart';
 import '../contact/contact_view.dart';
 import '../home/widgets/app_drawer.dart';
 import '../statistics/statistics_view.dart';
@@ -40,6 +44,7 @@ class _BaseViewState extends State<BaseView> {
     _model = BaseModel();
     _controller = BaseController(_model);
     _controller.init();
+    print('init');
     _loadInterstitialAd();
 
     BannerAd(
@@ -101,11 +106,15 @@ class _BaseViewState extends State<BaseView> {
             children: [
               Consumer<BaseModel>(
                 builder: (context, model, child) {
-                  return Container(
+                  return SizedBox(
                     height: _bannerAd != null
                         ? MediaQuery.of(context).size.height - 140
                         : MediaQuery.of(context).size.height - 100,
-                    child: model.user != null ? getPage(_pageIndex, model) : null,
+                    child: model.isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : getPage(_pageIndex, model),
                   );
                 },
               ),
@@ -120,20 +129,24 @@ class _BaseViewState extends State<BaseView> {
           bottomNavigationBar: getFooter(),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddTransactionView(model: _model)))
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddTransaction(model: _model)))
                   .then((value) => {
-                        setState(
-                          () {
-                            addedTransaction++;
-                            if (addedTransaction == 2 && _interstitialAd == null) {
-                              _loadInterstitialAd();
-                            }
-                            if (addedTransaction == 3 && _interstitialAd != null) {
-                              _interstitialAd!.show();
-                              addedTransaction = 0;
-                            }
-                          },
-                        )
+                        if (value)
+                          {
+                            setState(
+                              () {
+                                addedTransaction++;
+                                if (addedTransaction == 2 && _interstitialAd == null) {
+                                  _loadInterstitialAd();
+                                }
+                                if (addedTransaction == 3 && _interstitialAd != null) {
+                                  _interstitialAd!.show();
+                                  addedTransaction = 0;
+                                }
+                              },
+                            ),
+                            _controller.init()
+                          }
                       });
             },
             child: const Icon(Icons.add),
@@ -157,10 +170,8 @@ class _BaseViewState extends State<BaseView> {
       icons: iconItems,
       activeIndex: _pageIndex,
       gapLocation: GapLocation.center,
-      notchSmoothness: NotchSmoothness.softEdge,
-      leftCornerRadius: 10,
+      notchSmoothness: NotchSmoothness.defaultEdge,
       iconSize: 25,
-      rightCornerRadius: 10,
       onTap: (index) {
         selectedTab(index);
       },

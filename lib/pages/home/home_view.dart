@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double calculateBalance() {
     double balance = 0;
-    for (var transaction in widget.model.user!.transactions!) {
+    for (var transaction in widget.model.user.transactions) {
       if (transaction.type == TransactionType.income) {
         balance += transaction.amount;
       } else if (transaction.type == TransactionType.expense) {
@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double calculateIncome() {
     double income = 0;
-    for (var transaction in widget.model.user!.transactions!) {
+    for (var transaction in widget.model.user.transactions) {
       if (transaction.type == TransactionType.income) {
         income += transaction.amount;
       }
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double calculateOutcome() {
     double outcome = 0;
-    for (var element in widget.model.user!.transactions!) {
+    for (var element in widget.model.user.transactions) {
       if (element.type == TransactionType.expense) {
         outcome += element.amount;
       }
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         // drawer: AppDrawer(controller: _controller, interstitialAd: _interstitialAd),
         // onDrawerChanged: (isOpened) {
-        //   if (!isOpened && _interstitialAd != null) {
+        //   if (isOpened && _interstitialAd = null) {
         //     _loadInterstitialAd();
         //   }
         // },
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         balance: calculateBalance(),
                         income: calculateIncome(),
                         outcome: calculateOutcome(),
-                        currency: widget.model.user!.currency),
+                        currency: widget.model.user.currency),
                   ),
                 ],
               ),
@@ -141,14 +141,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TransactionsView(
-                              accounts: widget.model.user!.accounts!,
-                              transactions: widget.model.user!.transactions!,
-                              sortedTransactions: widget.model.user!.transactions!,
-                              categories: widget.model.user!.categories!,
-                              currency: widget.model.user!.currency,
+                              accounts: widget.model.user.accounts,
+                              transactions: widget.model.user.transactions,
+                              sortedTransactions: widget.model.user.transactions,
+                              categories: widget.model.user.categories,
+                              currency: widget.model.user.currency,
                             ),
                           ),
-                        ).then((value) => {widget.model.setUser(widget.model.user!)});
+                        ).then((value) => {widget.model.setUser(widget.model.user)});
                       },
                     )
                   ],
@@ -158,15 +158,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListView(
-                    key: Key(widget.model.user!.transactions!.length.toString()),
-                    children: widget.model.user!.transactions!
+                    key: Key(widget.model.user.transactions.length.toString()),
+                    children: widget.model.user.transactions
                         .map((tx) {
-                          var index = widget.model.user!.transactions!.indexOf(tx);
-                          var category = widget.model.user!.categories!.firstWhere(
+                          var index = widget.model.user.transactions.indexOf(tx);
+                          var category = widget.model.user.categories.firstWhere(
                             (element) => element.id == tx.categoryId,
                             orElse: () => Category(name: LocaleKeys.selectCategory.tr()),
                           );
-                          var account = widget.model.user!.accounts!.firstWhere(
+                          var account = widget.model.user.accounts.firstWhere(
                             (element) => element.id == tx.accountId,
                             orElse: () => Account(
                               id: '',
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           );
 
-                          var toAccount = widget.model.user!.accounts!.firstWhere(
+                          var toAccount = widget.model.user.accounts.firstWhere(
                             (element) => element.id == tx.toAccountId,
                             orElse: () => Account(
                               id: '',
@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (index == 0 ||
                                   DateFormat.yMd(context.locale.toLanguageTag()).format(tx.date) !=
                                       DateFormat.yMd(context.locale.toLanguageTag())
-                                          .format(widget.model.user!.transactions![index - 1].date)) ...[
+                                          .format(widget.model.user.transactions[index - 1].date)) ...[
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10.0, top: 10),
                                   child: Row(
@@ -215,11 +215,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 account: account,
                                 transaction: tx,
                                 category: category,
-                                currency: widget.model.user!.currency,
+                                currency: widget.model.user.currency,
                                 toAccount: toAccount,
                                 onDelete: () async {
-                                  widget.model.user!.transactions!.remove(tx);
-                                  widget.model.setUser(widget.model.user!);
+                                  widget.model.user.transactions.remove(tx);
+                                  widget.model.setUser(widget.model.user);
                                   SharedMethods(widget.model).deleteTransaction(tx);
                                 },
                                 onEdit: () {},
@@ -275,8 +275,8 @@ class _MyHomePageState extends State<MyHomePage> {
           //   if (transactionCount == 2 && _interstitialAd == null) {
           //     // _loadInterstitialAd();
           //   }
-          //   if (transactionCount == 3 && _interstitialAd != null) {
-          //     // _interstitialAd!.show();
+          //   if (transactionCount == 3 && _interstitialAd = null) {
+          //     // _interstitialAd.show();
           //     transactionCount = 0;
           //   }
           // }

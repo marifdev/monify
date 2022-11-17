@@ -3,12 +3,13 @@ import 'package:monify/models/transaction.dart';
 
 import '../../models/account.dart';
 import '../../models/category.dart';
+import '../../models/user.dart';
 
 class AccountsModel extends ChangeNotifier {
   List<Category> categories = [];
   List<TransactionModel> transactions = [];
   List<Account> accounts = [];
-  late String userId;
+  late UserModel user;
   bool isLoading = false;
 
   void loadCategories(List<Category> _categories) {
@@ -29,8 +30,8 @@ class AccountsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setUserId(String _userId) {
-    userId = _userId;
+  void setUser(UserModel _user) {
+    user = _user;
     notifyListeners();
   }
 

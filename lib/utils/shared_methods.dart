@@ -12,7 +12,7 @@ class SharedMethods {
   SharedMethods(this._model);
   void refreshCategories() async {
     _model.setLoading(true);
-    await getCategories(_model.user!.uid).then((value) {
+    await getCategories(_model.user.uid).then((value) {
       _model.loadCategories(value);
       _model.setLoading(false);
     });
@@ -20,7 +20,7 @@ class SharedMethods {
 
   Future<void> refreshTransactions() async {
     _model.setLoading(true);
-    await getTransactions(_model.user!.uid).then((value) {
+    await getTransactions(_model.user.uid).then((value) {
       _model.loadTransactions(value);
       _model.setLoading(false);
     });
@@ -28,7 +28,7 @@ class SharedMethods {
 
   Future<void> refreshUser() async {
     _model.setLoading(true);
-    await getUser(_model.user!.uid).then((value) {
+    await getUser(_model.user.uid).then((value) {
       _model.setUser(value);
       _model.setLoading(false);
     });
@@ -41,7 +41,7 @@ class SharedMethods {
 
   void refreshAccounts() async {
     _model.setLoading(true);
-    await getAccounts(_model.user!.uid).then((value) {
+    await getAccounts(_model.user.uid).then((value) {
       _model.loadAccounts(value);
       _model.setLoading(false);
     });
@@ -86,7 +86,7 @@ class SharedMethods {
   //delete transaction
   Future<void> deleteTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
-    await FirestoreMethods().deleteTransaction(transaction.id, _model.user!.uid).then((value) {
+    await FirestoreMethods().deleteTransaction(transaction.id, _model.user.uid).then((value) {
       refreshTransactions().then((value) {
         updateAccount(accountId: transaction.accountId!, updatedFields: {
           'balance': calculateBalance(transaction.accountId!),
@@ -101,32 +101,32 @@ class SharedMethods {
 
   Future<void> addTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
-    await FirestoreMethods().addTransaction(transaction: transaction, uid: _model.user!.uid).then((value) {
+    await FirestoreMethods().addTransaction(transaction: transaction, uid: _model.user.uid).then((value) {
       print('Transaction added');
     });
     await refreshTransactions();
     await updateAccount(accountId: transaction.accountId!, updatedFields: {
       'balance': calculateBalance(transaction.accountId!),
     });
-    var updatedAccount = _model.user!.accounts!.firstWhere((element) => element.id == transaction.accountId);
-    var index = _model.user!.accounts!.indexOf(updatedAccount);
-    _model.user!.accounts![index] = updatedAccount;
+    var updatedAccount = _model.user.accounts.firstWhere((element) => element.id == transaction.accountId);
+    var index = _model.user.accounts.indexOf(updatedAccount);
+    _model.user.accounts[index] = updatedAccount;
     if (transaction.type == TransactionType.transfer) {
       await updateAccount(accountId: transaction.toAccountId!, updatedFields: {
         'balance': calculateBalance(transaction.toAccountId!),
       });
-      var updatedToAccount = _model.user!.accounts!.firstWhere((element) => element.id == transaction.toAccountId);
-      var index2 = _model.user!.accounts!.indexOf(updatedToAccount);
-      _model.user!.accounts![index] = updatedToAccount;
+      var updatedToAccount = _model.user.accounts.firstWhere((element) => element.id == transaction.toAccountId);
+      var index2 = _model.user.accounts.indexOf(updatedToAccount);
+      _model.user.accounts[index2] = updatedToAccount;
     }
 
-    _model.loadAccounts(_model.user!.accounts!);
+    _model.loadAccounts(_model.user.accounts);
     _model.setLoading(false);
   }
 
   Future<void> updateTransaction(TransactionModel transaction) async {
     _model.setLoading(true);
-    await FirestoreMethods().updateTransaction(transaction: transaction, uid: _model.user!.uid).then((value) {
+    await FirestoreMethods().updateTransaction(transaction: transaction, uid: _model.user.uid).then((value) {
       refreshTransactions().then((value) {
         updateAccount(accountId: transaction.accountId!, updatedFields: {
           'balance': calculateBalance(transaction.accountId!),
@@ -159,12 +159,12 @@ class SharedMethods {
   }
 
   Future<void> updateAccount({required String accountId, required Map<String, dynamic> updatedFields}) async {
-    await FirestoreMethods().updateAccount(updatedFields: updatedFields, accountId: accountId, uid: _model.user!.uid);
+    await FirestoreMethods().updateAccount(updatedFields: updatedFields, accountId: accountId, uid: _model.user.uid);
   }
 
   calculateBalance(String accountId) {
     double balance = 0;
-    _model.user!.transactions!.forEach((element) {
+    _model.user.transactions.forEach((element) {
       if (element.accountId == accountId) {
         switch (element.type) {
           case TransactionType.income:

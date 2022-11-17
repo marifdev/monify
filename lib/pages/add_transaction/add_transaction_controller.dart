@@ -10,6 +10,6 @@ class AddTransactionController {
 
   Future<void> addTransaction(TransactionModel transaction) async {
     // await FirestoreMethods().addTransaction(transaction: transaction, uid: _model.user!.uid);
-    SharedMethods(_model).addTransaction(transaction);
+    await SharedMethods(_model).addTransaction(transaction);
   }
 }

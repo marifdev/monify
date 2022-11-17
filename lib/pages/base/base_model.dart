@@ -6,12 +6,8 @@ import '../../models/category.dart';
 import '../../models/transaction.dart';
 
 class BaseModel extends ChangeNotifier {
-  UserModel? user;
+  late UserModel user;
   bool isLoading = false;
-
-  BaseModel({
-    this.user,
-  });
 
   void setUser(UserModel _user) {
     user = _user;
@@ -24,26 +20,26 @@ class BaseModel extends ChangeNotifier {
   }
 
   void loadCategories(List<Category> _categories) {
-    user!.categories = _categories;
+    user.categories = _categories;
     notifyListeners();
   }
 
   void loadTransactions(List<TransactionModel> _transactions) {
-    user!.transactions = _transactions;
+    user.transactions = _transactions;
     sortTransactions('date');
     notifyListeners();
   }
 
   void loadAccounts(List<Account> _accounts) {
-    user!.accounts = _accounts;
+    user.accounts = _accounts;
     notifyListeners();
   }
 
   void sortTransactions(String _sortBy) {
     if (_sortBy == 'date') {
-      user!.transactions!.sort((a, b) => b.date.compareTo(a.date));
+      user.transactions.sort((a, b) => b.date.compareTo(a.date));
     } else if (_sortBy == 'amount') {
-      user!.transactions!.sort((a, b) => b.amount.compareTo(a.amount));
+      user.transactions.sort((a, b) => b.amount.compareTo(a.amount));
     }
   }
 }

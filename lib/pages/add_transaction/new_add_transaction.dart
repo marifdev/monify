@@ -5,12 +5,17 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:monify/constants.dart';
+import 'package:monify/models/account.dart';
+import 'package:monify/models/category.dart';
+import 'package:monify/pages/base/base_model.dart';
 
 import '../../generated/locale_keys.g.dart';
 import '../../models/transaction.dart';
+import 'add_transaction_controller.dart';
 
 class AddTransaction extends StatefulWidget {
-  const AddTransaction({Key? key}) : super(key: key);
+  final BaseModel model;
+  const AddTransaction({Key? key, required this.model}) : super(key: key);
 
   @override
   State<AddTransaction> createState() => _AddTransactionState();
@@ -22,15 +27,28 @@ class _AddTransactionState extends State<AddTransaction> {
   bool categorySelected = true;
   bool noteSelected = false;
   bool repeatSelected = false;
-  TransactionModel transaction = TransactionModel(
-    id: '',
-    title: '',
-    amount: 0,
-    date: DateTime.now(),
-    categoryId: '',
-    accountId: '1',
-    type: TransactionType.expense,
-  );
+  late TransactionModel transaction;
+  late Account selectedAccount;
+  late Category selectedCategory;
+  late final AddTransactionController _controller;
+
+  //initstate
+  @override
+  void initState() {
+    super.initState();
+    selectedAccount = widget.model.user.accounts[0];
+    selectedCategory = widget.model.user.categories.where((element) => element.name == 'Others').first;
+    transaction = TransactionModel(
+      id: '',
+      title: '',
+      amount: 0,
+      date: DateTime.now(),
+      categoryId: selectedCategory.id,
+      accountId: selectedAccount.id,
+      type: TransactionType.expense,
+    );
+    _controller = AddTransactionController(widget.model);
+  }
 
   var noteController = TextEditingController();
 
@@ -75,31 +93,30 @@ class _AddTransactionState extends State<AddTransaction> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.account_balance_wallet_outlined),
+                          Icon(getIconByAccounType(selectedAccount.type)),
                           const SizedBox(width: 8),
-                          const Text('Account 123'),
+                          Text(selectedAccount.name),
                         ],
                       ),
                     ),
                     itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            const Icon(Icons.account_balance_wallet),
-                            const SizedBox(width: 8),
-                            const Text('Account 1'),
-                          ],
+                      for (var account in widget.model.user.accounts)
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              Icon(getIconByAccounType(account.type)),
+                              const SizedBox(width: 8),
+                              Text(account.name),
+                            ],
+                          ),
+                          value: account,
+                          onTap: () {
+                            setState(() {
+                              selectedAccount = account;
+                              transaction.accountId = account.id;
+                            });
+                          },
                         ),
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            const Icon(Icons.account_balance_wallet),
-                            const SizedBox(width: 8),
-                            const Text('Account 2'),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -345,7 +362,7 @@ class _AddTransactionState extends State<AddTransaction> {
                 height: 40,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: kCategoryList.length,
+                  itemCount: widget.model.user.categories.length,
                   itemBuilder: (context, index) {
                     return Row(
                       children: [
@@ -383,13 +400,14 @@ class _AddTransactionState extends State<AddTransaction> {
                           borderRadius: BorderRadius.circular(8),
                           onTap: () {
                             setState(() {
-                              transaction.categoryId = kCategoryList[index].id;
+                              transaction.categoryId = widget.model.user.categories[index].id;
+                              selectedCategory = widget.model.user.categories[index];
                             });
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
-                              color: transaction.categoryId == kCategoryList[index].id
+                              color: transaction.categoryId == widget.model.user.categories[index].id
                                   ? kPrimaryColor
                                   : Colors.black.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -397,10 +415,11 @@ class _AddTransactionState extends State<AddTransaction> {
                             ),
                             child: Center(
                               child: Text(
-                                kCategoryList[index].name,
+                                widget.model.user.categories[index].name,
                                 style: TextStyle(
-                                  color:
-                                      transaction.categoryId == kCategoryList[index].id ? Colors.white : Colors.black,
+                                  color: transaction.categoryId == widget.model.user.categories[index].id
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                               ),
                             ),
@@ -514,6 +533,7 @@ class _AddTransactionState extends State<AddTransaction> {
               ],
             ),
             //save button
+            const SizedBox(height: 10),
             Container(
               width: double.infinity,
               height: 50,
@@ -523,11 +543,12 @@ class _AddTransactionState extends State<AddTransaction> {
                 color: kPrimaryColor,
               ),
               child: InkWell(
-                onTap: () {
+                onTap: () async {
                   if (_amountValue != '0') {
                     transaction.amount = double.parse(_amountValue);
-                    print(transaction.amount);
-                    // Navigator.pop(context);
+                    transaction.title == '' ? transaction.title = selectedCategory.name : transaction.title;
+                    await _controller.addTransaction(transaction);
+                    Navigator.pop(context, true);
                   }
                 },
                 child: Center(
@@ -543,5 +564,18 @@ class _AddTransactionState extends State<AddTransaction> {
         ),
       ),
     );
+  }
+
+  IconData? getIconByAccounType(AccountType type) {
+    switch (type) {
+      case AccountType.cash:
+        return Icons.payments_outlined;
+      case AccountType.bank:
+        return Icons.account_balance;
+      case AccountType.creditCard:
+        return Icons.credit_card;
+      default:
+        return Icons.account_balance_wallet;
+    }
   }
 }

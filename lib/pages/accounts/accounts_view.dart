@@ -30,15 +30,15 @@ class _AccountsViewState extends State<AccountsView> {
   );
 
   late final AccountsController _controller;
-  // late final AccountsModel _model;
+  late final AccountsModel _model;
 
   //init state
   @override
   void initState() {
     super.initState();
-    // _model = AccountsModel();
-    _controller = AccountsController(widget.model);
-    // _controller.init();
+    _model = AccountsModel();
+    _controller = AccountsController(baseModel: widget.model, accountsModel: _model);
+    _controller.init();
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -46,92 +46,95 @@ class _AccountsViewState extends State<AccountsView> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: ((context) => widget.model),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(LocaleKeys.accounts.tr()),
-          actions: [
-            (widget.model.user!.accounts != null &&
-                    widget.model.user!.accounts!.length > 2 &&
-                    !widget.model.user!.isPremium)
-                ? IconButton(
-                    icon: Icon(Icons.lock),
-                    onPressed: () {
-                      showModalBottomSheet(context: context, builder: (context) => PaywallScreen(model: widget.model))
-                          .then((value) {});
-                    },
-                  )
-                : IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddAccountView(),
-                        ),
-                      ).then((value) => _controller.refreshAccounts());
-                    },
-                  ),
-          ],
-        ),
-        body: widget.model.isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                color: kPrimaryColor,
-              ))
-            : ListView.builder(
-                itemCount: widget.model.user!.accounts?.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AccountDetailView(account: widget.model.user!.accounts![index]),
+      create: ((context) => _model),
+      child: Consumer<AccountsModel>(
+        builder: (context, model, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(LocaleKeys.accounts.tr()),
+              actions: [
+                (model.accounts != null && model.accounts.length > 2 && !model.user.isPremium)
+                    ? IconButton(
+                        icon: Icon(Icons.lock),
+                        onPressed: () {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) => PaywallScreen(model: widget.model)).then((value) {});
+                        },
+                      )
+                    : IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddAccountView(),
+                            ),
+                          ).then((value) => _controller.refreshAccounts());
+                        },
+                      ),
+              ],
+            ),
+            body: widget.model.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: kPrimaryColor,
+                  ))
+                : ListView.builder(
+                    itemCount: model.accounts.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AccountDetailView(account: model.accounts[index]),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          child: Slidable(
+                            endActionPane: ActionPane(
+                              motion: const DrawerMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    showBottomSheet(context, account: model.accounts[index]);
+                                  },
+                                  backgroundColor: kBlueColor,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.edit,
+                                  label: LocaleKeys.edit.tr(),
+                                ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    deleteAccount(widget.model, index, context);
+                                  },
+                                  backgroundColor: kErrorColor,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: LocaleKeys.delete.tr(),
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: kPrimaryColor,
+                                child: Icon(
+                                  getIconByAccounType(model.accounts[index].type),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(model.accounts[index].name.tr()),
+                              trailing: Text(model.accounts[index].balance.toString()),
+                            ),
+                          ),
                         ),
                       );
                     },
-                    child: Card(
-                      child: Slidable(
-                        endActionPane: ActionPane(
-                          motion: const DrawerMotion(),
-                          children: [
-                            SlidableAction(
-                              onPressed: (context) {
-                                showBottomSheet(context, account: widget.model.user!.accounts![index]);
-                              },
-                              backgroundColor: kBlueColor,
-                              foregroundColor: Colors.white,
-                              icon: Icons.edit,
-                              label: LocaleKeys.edit.tr(),
-                            ),
-                            SlidableAction(
-                              onPressed: (context) {
-                                deleteAccount(widget.model, index, context);
-                              },
-                              backgroundColor: kErrorColor,
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: LocaleKeys.delete.tr(),
-                            ),
-                          ],
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: kPrimaryColor,
-                            child: Icon(
-                              getIconByAccounType(widget.model.user!.accounts![index].type),
-                              color: Colors.white,
-                            ),
-                          ),
-                          title: Text(widget.model.user!.accounts![index].name.tr()),
-                          trailing: Text(widget.model.user!.accounts![index].balance.toString()),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                  ),
+          );
+        },
       ),
     );
   }
@@ -151,9 +154,8 @@ class _AccountsViewState extends State<AccountsView> {
   }
 
   void deleteAccount(BaseModel model, int index, BuildContext context) {
-    if (model.user!.transactions! != []) {
-      var hasTransaction =
-          model.user!.transactions!.any((element) => element.accountId == model.user!.accounts![index].id);
+    if (model.user.transactions != []) {
+      var hasTransaction = model.user.transactions.any((element) => element.accountId == model.user.accounts[index].id);
       if (hasTransaction) {
         showDialog(
           context: context,
@@ -173,7 +175,7 @@ class _AccountsViewState extends State<AccountsView> {
           },
         );
       } else {
-        if (model.user!.accounts!.length == 1) {
+        if (model.user.accounts.length == 1) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -208,7 +210,7 @@ class _AccountsViewState extends State<AccountsView> {
                   TextButton(
                     child: Text(LocaleKeys.delete.tr()),
                     onPressed: () async {
-                      _controller.deleteAccount(model.user!.accounts![index].id!);
+                      _controller.deleteAccount(model.user.accounts[index].id!);
                       Navigator.pop(context);
                     },
                   ),

@@ -16,8 +16,8 @@ class StatisticsController {
     _model.setUserId(FirebaseAuth.instance.currentUser!.uid);
     // getCategories(_model.userId).then((value) => _model.loadCategories(value));
     // getTransactions(_model.userId).then((value) => _model.loadTransactions(value));
-    _model.loadCategories(_baseModel.user!.categories!);
-    _model.loadTransactions(_baseModel.user!.transactions!);
+    _model.loadCategories(_baseModel.user.categories);
+    _model.loadTransactions(_baseModel.user.transactions);
     _model.setLoading(false);
   }
 

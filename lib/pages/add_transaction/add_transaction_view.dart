@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:monify/models/transaction.dart';
 import 'package:monify/pages/add_transaction/add_transaction_controller.dart';
+import 'package:monify/pages/base/base_controller.dart';
 
 import '../../generated/locale_keys.g.dart';
 import '../../models/account.dart';
@@ -36,6 +37,7 @@ class _AddTransactionViewState extends State<AddTransactionView> {
 
   late final AddTransactionController _controller;
 
+  @override
   void initState() {
     super.initState();
     _controller = AddTransactionController(widget.model);
@@ -214,7 +216,8 @@ class _AddTransactionViewState extends State<AddTransactionView> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         await _controller.addTransaction(_transaction);
-                        Navigator.pop(context);
+                        // await BaseController(widget.model).init();
+                        Navigator.pop(context, true);
                       }
                     },
                     child: Text(LocaleKeys.save.tr()),
@@ -235,7 +238,7 @@ class _AddTransactionViewState extends State<AddTransactionView> {
       // value: _transaction.toAccountId != null
       //     ? widget.model.user!.categories!.firstWhere((element) => element.id == _transaction.categoryId)
       //     : null,
-      items: widget.model.user!.categories!.map((category) {
+      items: widget.model.user.categories.map((category) {
         return DropdownMenuItem(
           value: category,
           child: Text(category.name),
@@ -263,7 +266,7 @@ class _AddTransactionViewState extends State<AddTransactionView> {
       //     ? widget.model.user!.accounts!.firstWhere((element) => element.id == _transaction.toAccountId)
       //     : null,
       isExpanded: true,
-      items: widget.model.user!.accounts!.map((account) {
+      items: widget.model.user.accounts.map((account) {
         return DropdownMenuItem(
           value: account,
           child: Text(account.name),
@@ -293,7 +296,7 @@ class _AddTransactionViewState extends State<AddTransactionView> {
       //     ? widget.accounts.firstWhere((element) => element.id == _transaction.accountId)
       //     : null,
       isExpanded: true,
-      items: widget.model.user!.accounts!.map((account) {
+      items: widget.model.user.accounts.map((account) {
         return DropdownMenuItem(
           value: account,
           child: Text(account.name),

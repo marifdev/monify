@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:monify/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,10 +12,13 @@ import 'package:monify/pages/onboarding/onboarding_view.dart';
 import 'package:purchases_flutter/object_wrappers.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
-final _configuration = PurchasesConfiguration('appl_LEKwHiwDPDbTwWIwnUyTBJbPueY');
+import 'pages/add_transaction/new_add_transaction.dart';
+
+final _configuration =
+    PurchasesConfiguration(Platform.isIOS ? 'appl_LEKwHiwDPDbTwWIwnUyTBJbPueY' : 'goog_tGdnySYObiqIBhjNaeJOZEzVnnN');
 
 void main() async {
-  List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE", "2e9b59b8a81eeb0bcb2e0312e0a94aa3"];
+  List<String> testDevices = ["7ABE9ACDE1496DF76DED55CA924426BE", "c7033721599c9ff6340e16f7566c6f46"];
   // List<String> testDevices = [];
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

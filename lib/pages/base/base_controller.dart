@@ -15,10 +15,10 @@ class BaseController {
   Future<void> init() async {
     model.setLoading(true);
     var user = await getUser();
+    model.setUser(user);
     var categories = await getCategories();
     var transactions = await getTransactions();
     var accounts = await getAccounts();
-    model.setUser(user);
     model.loadCategories(categories);
     model.loadTransactions(transactions);
     model.loadAccounts(accounts);

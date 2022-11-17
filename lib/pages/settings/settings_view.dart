@@ -36,7 +36,7 @@ class _SettingsViewState extends State<SettingsView> {
   void initState() {
     super.initState();
     _getCurrency();
-    isPremium = widget.model.user!.isPremium;
+    isPremium = widget.model.user.isPremium;
   }
 
   void _getCurrency() async {
@@ -69,7 +69,7 @@ class _SettingsViewState extends State<SettingsView> {
                   //   trailing: Switch(
                   //     value: isDark,
                   //     onChanged: (value) {
-                  //       value = !value;
+                  //       value = value;
                   //       value ? ThemeMode.dark : ThemeMode.light;
                   //     },
                   //   ),
@@ -163,21 +163,22 @@ class _SettingsViewState extends State<SettingsView> {
                       LaunchReview.launch(iOSAppId: '6443472705');
                     },
                   ),
-                  if (!isPremium)
-                    ListTile(
-                      minLeadingWidth: 0,
-                      leading: const Icon(Icons.lock),
-                      title: Text(
-                        LocaleKeys.bePremium.tr(),
-                      ),
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isDismissible: false,
-                          builder: (context) => PaywallScreen(model: widget.model),
-                        );
-                      },
+                  ListTile(
+                    minLeadingWidth: 0,
+                    leading: const Icon(Icons.lock),
+                    title: Text(
+                      LocaleKeys.bePremium.tr(),
                     ),
+                    onTap: !isPremium
+                        ? () {
+                            showModalBottomSheet(
+                              context: context,
+                              isDismissible: false,
+                              builder: (context) => PaywallScreen(model: widget.model),
+                            );
+                          }
+                        : null,
+                  ),
                   ListTile(
                     minLeadingWidth: 0,
                     leading: const Icon(Icons.logout),
@@ -267,7 +268,7 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   Future<void> _launchUrl(_url) async {
-    if (!await launchUrl(_url)) {
+    if (await launchUrl(_url)) {
       throw 'Could not launch $_url';
     }
   }
